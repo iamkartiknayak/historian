@@ -40,15 +40,6 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     copyTextToClipboard();
   }
 
-  void _handleKeyPress(RawKeyEvent event) {
-    NativeServices.handleKeyPress(
-      event,
-      _selectedItemIndex,
-      _clipboard.length,
-      _scrollController,
-    );
-  }
-
   int _imageAutoDeleteIndex = 0;
   void stickToClipboardSize() {
     if (_clipboard.length > _itemCount) {
@@ -99,78 +90,95 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   }
 
   void loadAppSettings(int itemCount) {
-    _itemCount = itemCount;
-    updateClipboardSize();
-    scrollToTop();
     if (!_isInitialRun) {
       startListening();
       _isInitialRun = true;
     }
+
+    _itemCount = itemCount;
+    updateClipboardSize();
+    scrollToTop();
+  }
+
+  late int _refreshTime;
+  void setRefreshTime() => _refreshTime = NativeServices.isLinux ? 1 : 3;
+
+  // called once during intial runtime
+  void startListening() {
+    RawKeyboard.instance.addListener(_handleKeyPress);
+    NativeServices.initFileSystemVariables();
+    setRefreshTime();
+
+    clipboardWatcher.addListener(this);
+    clipboardWatcher.start();
+    copyImageToClipboard();
+  }
+
+  int _handleKeyPress(RawKeyEvent event) {
+    if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+      if (_selectedItemIndex + 1 < _clipboard.length) {
+        _selectedItemIndex += 1;
+      }
+    } else if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+      if (_selectedItemIndex - 1 > -1) {
+        _selectedItemIndex -= 1;
+      }
+    }
+
+    _scrollController.scrollTo(
+      index: _selectedItemIndex,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+
+    notifyListeners();
+    return selectedItemIndex;
   }
 
   int _imageCount = 0;
   late ProcessResult lastSum;
   String latestImageHash = '';
-  static const nullSha1Value = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+
+  void addToClipboard(File file) {
+    _clipboard.add(
+      ClipboardItem(
+        id: const Uuid().v4(),
+        content: file,
+        isPinned: false,
+      ),
+    );
+
+    stickToClipboardSize();
+    scrollToTop();
+    return;
+  }
 
   Future copyImageToClipboard() async {
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
+    Timer.periodic(Duration(seconds: _refreshTime), (timer) async {
       try {
-        final imageExist = await NativeServices.doesImageExistInClipboard();
-        final tempSum = await NativeServices.getClipboardImageShaValue();
-        final tempImageHash = tempSum.stdout.split(' ').first;
+        final clipboardImageStat = await NativeServices.getClipboardImageStat();
+        final tempImageHash = clipboardImageStat.$1;
+        final imageExist = clipboardImageStat.$2;
 
-        if (_imageCount == 0 && imageExist && tempImageHash != nullSha1Value) {
+        debugPrint('imagExistValue : "$imageExist"');
+
+        if (_imageCount == 0 && imageExist) {
           _imageCount += 1;
           await NativeServices.saveTempImageFile(_imageCount);
-          lastSum =
-              await NativeServices.runCommand('sha1sum image$_imageCount.png');
-          latestImageHash = lastSum.stdout.toString().split(' ').first;
-          final file = File('image$_imageCount.png');
-          clipboard.add(
-            ClipboardItem(
-              id: const Uuid().v4(),
-              content: file,
-              isPinned: false,
-            ),
-          );
-          stickToClipboardSize();
-          scrollToTop();
-          return;
+          addToClipboard(File('image$_imageCount.png'));
+          latestImageHash = tempImageHash;
         }
 
-        if (latestImageHash != tempImageHash &&
-            imageExist &&
-            tempImageHash != nullSha1Value) {
+        if (latestImageHash != tempImageHash && imageExist) {
           _imageCount += 1;
           await NativeServices.saveTempImageFile(_imageCount);
-
-          lastSum = await Process.run('sha1sum', ['image$_imageCount.png']);
-          latestImageHash = lastSum.stdout.toString().split(' ').first;
-          final file = File('image$_imageCount.png');
-          clipboard.add(
-            ClipboardItem(
-              id: const Uuid().v4(),
-              content: file,
-              isPinned: false,
-            ),
-          );
-          stickToClipboardSize();
-          scrollToTop();
+          addToClipboard(File('image$_imageCount.png'));
+          latestImageHash = tempImageHash;
         }
       } catch (e) {
         debugPrint(e.toString());
       }
     });
-  }
-
-  void startListening() {
-    RawKeyboard.instance.addListener(_handleKeyPress);
-
-    clipboardWatcher.addListener(this);
-    clipboardWatcher.start();
-    copyImageToClipboard();
-    NativeServices.createTempFolder();
   }
 
   void updateClipboardSize() {
@@ -184,8 +192,19 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   }
 
   Future<bool> saveImageFile(String imagePath) async {
+    final saveInitDir = path.join(
+      NativeServices.getHomeDirPath,
+      NativeServices.getTempDirPath,
+    );
+
+    final tempFileName = '${const Uuid().v4()}.png';
+
     final String? filePath = await FilePicker.platform.saveFile(
       dialogTitle: 'Save Your File to desired location',
+      initialDirectory: saveInitDir,
+      lockParentWindow: true,
+      fileName: tempFileName,
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'heic'],
     );
 
     if (filePath == null) {
@@ -272,6 +291,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   void deleteImage(int index, File file) {
     Clipboard.setData(const ClipboardData(text: ''));
     PaintingBinding.instance.imageCache.clear();
+    PaintingBinding.instance.imageCache.clearLiveImages();
 
     file.delete();
     _clipboard.removeAt(index);
@@ -281,10 +301,8 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
 
   void copySelectedContent(dynamic content, bool isFile, int index) {
     _selectedItemIndex = index;
-
     isFile
-        ? NativeServices.runCommand(
-            'xclip -selection clipboard -t image/png -i ${content.path}')
+        ? NativeServices.copySelectionToClipboard(content.path)
         : Clipboard.setData(ClipboardData(text: content));
 
     notifyListeners();
