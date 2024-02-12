@@ -6,7 +6,7 @@ enum ModificationType {
 }
 
 class SettingsPageProvider extends ChangeNotifier {
-  int _clipboardSize = 3;
+  int _clipboardSize = 15;
   int get clipboardSize => _clipboardSize;
 
   void setClipboardSize(ModificationType type) {
