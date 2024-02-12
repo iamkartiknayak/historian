@@ -7,12 +7,14 @@ class EmptyClipboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final screenHeight = MediaQuery.of(context).size.width;
+
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      height: screenHeight + 50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 100),
           Padding(
             padding: const EdgeInsets.only(left: 20.0, bottom: 20.0),
             child: Image.asset(
