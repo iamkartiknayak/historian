@@ -13,7 +13,7 @@ void main() {
   WindowManager.instance.setTitle('Historian');
   WindowManager.instance.setMinimumSize(const Size(400, 600));
   WindowManager.instance.setMaximumSize(const Size(400, 600));
-  WindowManager.instance.setSkipTaskbar(true);
+  // WindowManager.instance.setSkipTaskbar(true); // breaks app in windows
   WindowManager.instance.focus();
   WindowManager.instance.setAlwaysOnTop(true);
   runApp(const Historian());
