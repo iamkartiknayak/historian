@@ -1,16 +1,56 @@
-import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'dart:io';
-import 'package:flutter/services.dart';
+
+import './native_scripts.dart';
+
+enum PlatformType {
+  linux,
+  windows,
+}
 
 class NativeServices {
-  static const _tempDirPath = '.historian/temp';
+  static late String _tempDirPath;
   static String get getTempDirPath => _tempDirPath;
 
-  static final _homeDirPath = Platform.environment['HOME']!;
+  static late String _homeDirPath;
   static String get getHomeDirPath => _homeDirPath;
+
+  static late PlatformType _platformType;
+
+  static final isLinux = _platformType == PlatformType.linux;
+
+  static const nullSha1Value = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
+
+  // execute functions in order to setup storage access
+  static void initFileSystemVariables() {
+    setPlatformValues(); // sets isLinux
+    setHomeDirPath(); // gets path according to system
+    createTempFolder(); // create temp dir in acquired path
+  }
+
+  // fetch and set isLinux var to help execute tasks in other function accordingly
+  static void setPlatformValues() {
+    final platform = Platform.operatingSystem;
+    switch (platform) {
+      case 'linux':
+        _platformType = PlatformType.linux;
+        break;
+
+      case 'windows':
+        _platformType = PlatformType.windows;
+        break;
+    }
+  }
+
+  // get system specific home dir path
+  static void setHomeDirPath() {
+    _homeDirPath = isLinux
+        ? Platform.environment['HOME']!
+        : Platform.environment['USERPROFILE']!;
+
+    _tempDirPath = isLinux ? '.historian/temp' : r'.historian\temp';
+  }
 
   // create temp  directory to save copied images temporarily
   static void createTempFolder() {
@@ -21,50 +61,69 @@ class NativeServices {
     runCommand('rm -r $folderPath/*');
   }
 
-  // run linux commands
-  static Future<ProcessResult> runCommand(String command) async =>
-      await Process.run('/bin/bash', ['-c', command]);
-
-  // handles various keypress events
-  static int handleKeyPress(
-    RawKeyEvent event,
-    int selectedItemIndex,
-    int clipboardLength,
-    ItemScrollController scrollController,
-  ) {
-    if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      if (selectedItemIndex + 1 < clipboardLength) {
-        selectedItemIndex += 1;
-      }
-    } else if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
-      if (selectedItemIndex - 1 > -1) {
-        selectedItemIndex -= 1;
-      }
-    }
-
-    scrollController.scrollTo(
-      index: selectedItemIndex,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-    );
-
-    // notifyListeners();
-    return selectedItemIndex;
+  // run system commands
+  static Future<ProcessResult> runCommand(String command) async {
+    final executor = isLinux ? '/bin/bash' : 'powershell';
+    return await Process.run(executor, ['-c', command]);
   }
 
-  // returns result of calculating sha1value of the image in clipboard
-  static Future<ProcessResult> getClipboardImageShaValue() async =>
-      await runCommand('xclip -selection clipboard -t image/png -o | sha1sum');
+  // validates string for sha1
+  static bool isValidSHA1(String inputString) {
+    if (isLinux && inputString == nullSha1Value) {
+      return false;
+    }
 
-  // checks if image exist in clipboard
-  static Future<bool> doesImageExistInClipboard() async {
-    final tempSum = await getClipboardImageShaValue();
-    return tempSum.stderr.toString().isEmpty;
+    if (!isLinux && inputString == 'clipboard.') {
+      return false;
+    }
+
+    RegExp sha1Regex = RegExp(r'^[0-9a-fA-F]{40}$');
+    return sha1Regex.hasMatch(inputString);
+  }
+
+  // returns sha1value of the image in clipboard if exist
+  // returns if error is empty to validate clip-image existance
+  static Future<(String, bool)> getClipboardImageStat() async {
+    final cmd = isLinux
+        ? NativeScripts.linuxClipImageShaCmd
+        : NativeScripts.windowsClipImageShaCmd;
+
+    final result = await runCommand(cmd);
+    final sha1Sum = isLinux
+        ? result.stdout.toString().trim().split(' ').first
+        : result.stdout.toString().trim().split(' ').last;
+    final imageExist = isValidSHA1(sha1Sum);
+
+    return (sha1Sum, imageExist);
+  }
+
+  // returns sha1Value of a image saved in file-system
+  static Future<String> getFSImageStat(int imageCount) async {
+    final cmd = isLinux
+        ? NativeScripts.getLinuxFSImageShaCmd(imageCount)
+        : NativeScripts.getWindowsFSImageShaCmd(imageCount);
+
+    final result = await runCommand(cmd);
+    final sha1Sum = isLinux
+        ? result.stdout.toString().trim().split(' ').first
+        : result.stdout.toString().trim().split(' ').last;
+
+    return sha1Sum;
   }
 
   // save copied images to temp folder
-  static Future<void> saveTempImageFile(int imageCount) async {
-    await runCommand(
-        'xclip -selection clipboard -t image/png -o > image$imageCount.png');
-  }
+  static Future<void> saveTempImageFile(int imageCount) async =>
+      await runCommand(
+        isLinux
+            ? NativeScripts.getLinuxClipImageSaveCmd(imageCount)
+            : NativeScripts.getWindowsClipImageSaveCmd(imageCount),
+      );
+
+  // copies selected non-text content to clipboard
+  static Future<void> copySelectionToClipboard(String imagePath) async =>
+      await runCommand(
+        isLinux
+            ? NativeScripts.getLinuxSelectionToClipCmd(imagePath)
+            : NativeScripts.getWindowsSelectionToClipCmd(imagePath),
+      );
 }
