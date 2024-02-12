@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class AppVersionCard extends StatelessWidget {
   const AppVersionCard({
@@ -17,14 +16,14 @@ class AppVersionCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.content_paste,
             color: Colors.teal,
             size: 22,
           ),
           const SizedBox(width: 8),
           Text(
-            'Historian v0.1',
+            'Historian v1.1.0',
             style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   fontWeight: FontWeight.w300,
                   letterSpacing: 0.5,
