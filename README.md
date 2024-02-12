@@ -1,6 +1,6 @@
-# Historian - Clipboard Manager for Linux
+# Historian - A Flutter Clipboard Manager
 
-Historian is a versatile clipboard manager designed for Linux users, providing seamless handling of both text and image clipboard entries. This application allows users to efficiently manage and organize their clipboard history, offering features such as text and image copying, image saving to a user-defined location, and setting limits on the number of items stored in the clipboard.
+Historian is a versatile clipboard manager designed to provide seamless handling of both text and image clipboard entries. This application allows users to efficiently manage and organize their clipboard history, offering features such as text and image copying, image saving to a user-defined location, and setting limits on the number of items stored in the clipboard.
 
 ### Features
 
@@ -45,7 +45,7 @@ flutter run
 
 ### Usage
 
-- Launch Historian on your Linux system.
+- Launch Historian on your system.
 - Copy text or images, and they will be automatically added to your clipboard history.
 - Save images to a specified location for later use.
 - Set a limit on the number of items stored in the clipboard to manage resources efficiently.
