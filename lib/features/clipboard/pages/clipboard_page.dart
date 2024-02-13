@@ -82,18 +82,13 @@ class ClipboardPage extends StatelessWidget {
           isPinned: isPinned,
           isSelected: index == value.selectedItemIndex,
           onTap: () {
-            value.copySelectedContent(
-              content,
-              isFile,
-              index,
-            );
+            value.copySelectedContent(index);
             _showSnackBar(context, 'Item copied to clipboard');
           },
           onPinTap: () =>
               isPinned ? value.unpinItem(index) : value.pinItem(index),
-          onDeleteTap: () => isFile
-              ? value.deleteImage(index, content)
-              : value.deleteItem(index),
+          onDeleteTap: () =>
+              isFile ? value.deleteImage(index) : value.deleteText(index),
           onSaveTap: isFile
               ? () async {
                   final saved = await value.saveImageFile(content.path);

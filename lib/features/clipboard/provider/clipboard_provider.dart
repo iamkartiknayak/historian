@@ -115,8 +115,28 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   }
 
   int _handleKeyPress(RawKeyEvent event) {
+    if (event is RawKeyDownEvent && event.isControlPressed) {
+      final isFile = clipboard[selectedItemIndex].content is File;
+
+      if (event.logicalKey == LogicalKeyboardKey.keyC) {
+        copySelectedContent(_selectedItemIndex);
+      }
+
+      if (event.logicalKey == LogicalKeyboardKey.keyD) {
+        isFile ? deleteImage(selectedItemIndex) : deleteText(selectedItemIndex);
+        _selectedItemIndex -= selectedItemIndex != 0 ? 1 : 0;
+      }
+
+      if (event.logicalKey == LogicalKeyboardKey.keyS) {
+        isFile
+            ? saveImageFile(clipboard[selectedItemIndex].content.path)
+            : null;
+      }
+      return selectedItemIndex;
+    }
+
     if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
-      if (_selectedItemIndex + 1 < _clipboard.length) {
+      if (selectedItemIndex + 1 < _clipboard.length) {
         _selectedItemIndex += 1;
       }
     } else if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
@@ -153,14 +173,12 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     return;
   }
 
-  Future copyImageToClipboard() async {
+  void copyImageToClipboard() {
     Timer.periodic(Duration(seconds: _refreshTime), (timer) async {
       try {
         final clipboardImageStat = await NativeServices.getClipboardImageStat();
         final tempImageHash = clipboardImageStat.$1;
         final imageExist = clipboardImageStat.$2;
-
-        debugPrint('imagExistValue : "$imageExist"');
 
         if (_imageCount == 0 && imageExist) {
           _imageCount += 1;
@@ -228,7 +246,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   void pinItem(int index) {
     final item = _clipboard[index];
 
-    deleteItem(index);
+    deleteText(index);
     _clipboard.add(item.copyWith(isPinned: true));
     _pinnedItems[item.id] = index;
 
@@ -248,7 +266,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     final originalIndex = _pinnedItems[item.id];
     final updatedItem = item.copyWith(isPinned: false);
 
-    deleteItem(index);
+    deleteText(index);
     _clipboard.insert(originalIndex!, updatedItem);
     _pinnedItems.remove(item.id);
 
@@ -281,26 +299,31 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     notifyListeners();
   }
 
-  void deleteItem(int index) {
+  void deleteText(int index) {
     Clipboard.setData(const ClipboardData(text: ''));
     _clipboard.removeAt(index);
     _imageCount -= 1;
     notifyListeners();
   }
 
-  void deleteImage(int index, File file) {
+  // void deleteImage(int index, File file) {
+  void deleteImage(int index) {
+    final image = clipboard[index].content;
     Clipboard.setData(const ClipboardData(text: ''));
     PaintingBinding.instance.imageCache.clear();
     PaintingBinding.instance.imageCache.clearLiveImages();
 
-    file.delete();
+    image.delete();
     _clipboard.removeAt(index);
     _imageCount -= 1;
     notifyListeners();
   }
 
-  void copySelectedContent(dynamic content, bool isFile, int index) {
+  void copySelectedContent(int index) {
     _selectedItemIndex = index;
+    final content = clipboard[_selectedItemIndex].content;
+    final isFile = content is File;
+
     isFile
         ? NativeServices.copySelectionToClipboard(content.path)
         : Clipboard.setData(ClipboardData(text: content));
