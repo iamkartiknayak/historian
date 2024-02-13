@@ -28,6 +28,10 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   late int _itemCount;
   bool _isInitialRun = false;
 
+  bool _skipText = false;
+  bool _skipImage = false;
+  String _skippedItemValue = '';
+
   @override
   void dispose() {
     RawKeyboard.instance.removeListener(_handleKeyPress);
@@ -60,11 +64,17 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     final isValidString = content is String && content.trim().isNotEmpty;
     final isNewContent = clipboard.isEmpty || content != clipboard.last.content;
 
-    if (!isValidString || !isNewContent) {
+    if (_skipText) {
+      final result = await Clipboard.getData(Clipboard.kTextPlain);
+      _skippedItemValue = result?.text ?? '';
+      _skipText = false;
+    }
+
+    final isSkippedItem = content == _skippedItemValue;
+    if (!isValidString || !isNewContent || isSkippedItem) {
       return;
     }
 
-    debugPrint('Copied String $content');
     clipboard.add(
       ClipboardItem(
         id: const Uuid().v4(),
@@ -187,7 +197,15 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
           latestImageHash = tempImageHash;
         }
 
-        if (latestImageHash != tempImageHash && imageExist) {
+        if (_skipImage) {
+          final result = await NativeServices.getClipboardImageStat();
+          _skippedItemValue = result.$1;
+          _skipImage = false;
+        }
+
+        final isNewImage = latestImageHash != tempImageHash;
+        final isNotSkippedItem = tempImageHash != _skippedItemValue;
+        if (isNewImage && imageExist && !_skipImage && isNotSkippedItem) {
           _imageCount += 1;
           await NativeServices.saveTempImageFile(_imageCount);
           addToClipboard(File('image$_imageCount.png'));
@@ -328,6 +346,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
         ? NativeServices.copySelectionToClipboard(content.path)
         : Clipboard.setData(ClipboardData(text: content));
 
+    isFile ? _skipImage = true : _skipText = true;
     notifyListeners();
   }
 }
