@@ -125,6 +125,10 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   }
 
   int _handleKeyPress(RawKeyEvent event) {
+    if (clipboard.isEmpty) {
+      return _selectedItemIndex;
+    }
+
     if (event is RawKeyDownEvent && event.isControlPressed) {
       final isFile = clipboard[selectedItemIndex].content is File;
 
