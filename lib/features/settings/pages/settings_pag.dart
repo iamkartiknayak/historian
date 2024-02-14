@@ -27,7 +27,10 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  const Text('Clipboard size'),
+                  Text(
+                    'Clipboard size',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                   const Spacer(),
                   CustomButton(
                     onTap: () =>
@@ -38,7 +41,10 @@ class SettingsPage extends StatelessWidget {
                     width: 32,
                     child: Text(
                       value.clipboardSize.toString(),
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleSmall!
+                          .copyWith(fontSize: 15),
                       textAlign: TextAlign.center,
                     ),
                   ),
