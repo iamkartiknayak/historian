@@ -23,7 +23,7 @@ class AppVersionCard extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            'Historian v1.1.0',
+            'Historian v1.3.2',
             style: Theme.of(context).textTheme.titleSmall!.copyWith(
                   fontWeight: FontWeight.w300,
                   letterSpacing: 0.5,
