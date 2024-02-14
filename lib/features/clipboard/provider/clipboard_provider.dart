@@ -230,7 +230,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
   Future<bool> saveImageFile(String imagePath) async {
     final saveInitDir = path.join(
       NativeServices.getHomeDirPath,
-      NativeServices.getTempDirPath,
+      'Downloads',
     );
 
     final tempFileName = '${const Uuid().v4()}.png';
@@ -240,6 +240,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
       initialDirectory: saveInitDir,
       lockParentWindow: true,
       fileName: tempFileName,
+      type: FileType.image,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'heic'],
     );
 
