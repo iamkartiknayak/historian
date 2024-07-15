@@ -34,7 +34,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
 
   @override
   void dispose() {
-    RawKeyboard.instance.removeListener(_handleKeyPress);
+    HardwareKeyboard.instance.removeHandler(_handleKeyPress);
     super.dispose();
   }
 
@@ -115,7 +115,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
 
   // called once during intial runtime
   void startListening() {
-    RawKeyboard.instance.addListener(_handleKeyPress);
+    HardwareKeyboard.instance.addHandler(_handleKeyPress);
     NativeServices.initFileSystemVariables();
     setRefreshTime();
 
@@ -124,12 +124,13 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     copyImageToClipboard();
   }
 
-  int _handleKeyPress(RawKeyEvent event) {
+  bool _handleKeyPress(KeyEvent event) {
     if (clipboard.isEmpty) {
-      return _selectedItemIndex;
+      return false;
     }
 
-    if (event is RawKeyDownEvent && event.isControlPressed) {
+    if (event is KeyDownEvent &&
+        event.logicalKey == PhysicalKeyboardKey.controlLeft) {
       final isFile = clipboard[selectedItemIndex].content is File;
 
       if (event.logicalKey == LogicalKeyboardKey.keyC) {
@@ -146,14 +147,14 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
             ? saveImageFile(clipboard[selectedItemIndex].content.path)
             : null;
       }
-      return selectedItemIndex;
+      return true;
     }
 
-    if (event.isKeyPressed(LogicalKeyboardKey.arrowUp)) {
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
       if (selectedItemIndex + 1 < _clipboard.length) {
         _selectedItemIndex += 1;
       }
-    } else if (event.isKeyPressed(LogicalKeyboardKey.arrowDown)) {
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
       if (_selectedItemIndex - 1 > -1) {
         _selectedItemIndex -= 1;
       }
@@ -166,7 +167,7 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     );
 
     notifyListeners();
-    return selectedItemIndex;
+    return true;
   }
 
   int _imageCount = 0;
