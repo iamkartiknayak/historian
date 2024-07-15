@@ -23,7 +23,7 @@ class CustomButton extends StatelessWidget {
           minWidth: 32,
         ),
         decoration: BoxDecoration(
-          color: Theme.of(context).buttonTheme.colorScheme!.background,
+          color: Theme.of(context).buttonTheme.colorScheme!.surface,
           borderRadius: BorderRadius.circular(label != null ? 4 : 4),
         ),
         padding: label != null

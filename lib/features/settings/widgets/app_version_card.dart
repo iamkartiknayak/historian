@@ -9,7 +9,7 @@ class AppVersionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).buttonTheme.colorScheme!.background,
+        color: Theme.of(context).buttonTheme.colorScheme!.surface,
         borderRadius: BorderRadius.circular(4),
       ),
       width: double.infinity,

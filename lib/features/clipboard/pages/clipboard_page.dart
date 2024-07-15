@@ -111,7 +111,7 @@ void _showSnackBar(BuildContext context, String message) {
         message,
         style: Theme.of(context).textTheme.titleSmall,
       ),
-      backgroundColor: Theme.of(context).buttonTheme.colorScheme!.background,
+      backgroundColor: Theme.of(context).buttonTheme.colorScheme!.surface,
     ),
   );
 }

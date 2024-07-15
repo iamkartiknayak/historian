@@ -25,7 +25,7 @@ class AppTheme {
     ),
     buttonTheme: ButtonThemeData(
       colorScheme: ColorScheme.dark(
-        background: Colors.grey.shade300,
+        surface: Colors.grey.shade300,
       ),
     ),
   );
@@ -52,7 +52,7 @@ class AppTheme {
     ),
     buttonTheme: const ButtonThemeData(
       colorScheme: ColorScheme.dark(
-        background: Color(0xFF302B36),
+        surface: Color(0xFF302B36),
       ),
     ),
   );
