@@ -33,6 +33,11 @@ cd historian
 
 #### Install the dependencies:
 
+xclip is needed to get the images from clipboard 
+```bash
+sudo apt install xclip 
+```
+
 ```bash
 flutter pub get
 ```
