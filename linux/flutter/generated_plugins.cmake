@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   clipboard_watcher
   screen_retriever
+  system_theme
   window_manager
 )
 
