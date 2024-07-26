@@ -124,40 +124,39 @@ class ClipboardProvider extends ChangeNotifier with ClipboardListener {
     copyImageToClipboard();
   }
 
+  final Set<LogicalKeyboardKey> _pressedKeys = {};
+
   bool _handleKeyPress(KeyEvent event) {
     if (clipboard.isEmpty) {
       return false;
     }
 
-    if (event is KeyDownEvent &&
-        event.logicalKey == PhysicalKeyboardKey.controlLeft) {
-      final isFile = clipboard[selectedItemIndex].content is File;
-
-      if (event.logicalKey == LogicalKeyboardKey.keyC) {
+    final isFile = clipboard[selectedItemIndex].content is File;
+    if (event is KeyDownEvent) {
+      _pressedKeys.add(event.logicalKey);
+      if (_pressedKeys.contains(LogicalKeyboardKey.controlLeft) &&
+          _pressedKeys.contains(LogicalKeyboardKey.keyC)) {
         copySelectedContent(_selectedItemIndex);
-      }
-
-      if (event.logicalKey == LogicalKeyboardKey.keyD) {
-        isFile ? deleteImage(selectedItemIndex) : deleteText(selectedItemIndex);
-        _selectedItemIndex -= selectedItemIndex != 0 ? 1 : 0;
-      }
-
-      if (event.logicalKey == LogicalKeyboardKey.keyS) {
+      } else if (_pressedKeys.contains(LogicalKeyboardKey.controlLeft) &&
+          _pressedKeys.contains(LogicalKeyboardKey.keyS)) {
         isFile
             ? saveImageFile(clipboard[selectedItemIndex].content.path)
             : null;
+      } else if (_pressedKeys.contains(LogicalKeyboardKey.controlLeft) &&
+          _pressedKeys.contains(LogicalKeyboardKey.keyD)) {
+        isFile ? deleteImage(selectedItemIndex) : deleteText(selectedItemIndex);
+        _selectedItemIndex -= selectedItemIndex != 0 ? 1 : 0;
+      } else if (_pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
+        if (selectedItemIndex + 1 < _clipboard.length) {
+          _selectedItemIndex += 1;
+        }
+      } else if (_pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
+        if (_selectedItemIndex - 1 > -1) {
+          _selectedItemIndex -= 1;
+        }
       }
-      return true;
-    }
-
-    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      if (selectedItemIndex + 1 < _clipboard.length) {
-        _selectedItemIndex += 1;
-      }
-    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      if (_selectedItemIndex - 1 > -1) {
-        _selectedItemIndex -= 1;
-      }
+    } else if (event is KeyUpEvent) {
+      _pressedKeys.remove(event.logicalKey);
     }
 
     _scrollController.scrollTo(
