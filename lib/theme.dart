@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  static late Color accentColor;
   static const fontFamily = 'Inter';
+  HSLColor hslColor = HSLColor.fromColor(accentColor);
+
+  static Color darken(Color color) {
+    final hsl = HSLColor.fromColor(color);
+    final hslDark = hsl.withLightness((hsl.lightness - 0.4).clamp(0.0, 1.0));
+    return hslDark.toColor();
+  }
+
+  // balance contrast if the accent color is too light
+  static final lightThemeColor =
+      accentColor.computeLuminance() >= 0.5 ? darken(accentColor) : accentColor;
+
+  static Color getSelectionColor(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    if (isDarkMode) return accentColor;
+    return darken(accentColor);
+  }
 
   static final lightTheme = ThemeData.light().copyWith(
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       bodyLarge: TextStyle(
-        color: Colors.black,
+        color: lightThemeColor,
         fontSize: 20,
         fontWeight: FontWeight.w500,
         fontFamily: fontFamily,
       ),
       bodySmall: TextStyle(
-        color: Colors.black,
+        color: lightThemeColor.withAlpha(255),
         fontSize: 14,
         height: 1.4,
         fontFamily: fontFamily,
       ),
-      titleSmall: TextStyle(
+      titleSmall: const TextStyle(
         color: Colors.black,
         fontWeight: FontWeight.w400,
         fontFamily: fontFamily,
@@ -25,34 +44,34 @@ class AppTheme {
     ),
     buttonTheme: ButtonThemeData(
       colorScheme: ColorScheme.dark(
-        surface: Colors.grey.shade300,
+        surface: lightThemeColor.withAlpha(48),
       ),
     ),
   );
 
   static final darkTheme = ThemeData.dark().copyWith(
-    textTheme: const TextTheme(
+    textTheme: TextTheme(
       bodyLarge: TextStyle(
-        color: Colors.grey,
+        color: accentColor,
         fontSize: 20,
         fontWeight: FontWeight.w500,
         fontFamily: fontFamily,
       ),
       bodySmall: TextStyle(
-        color: Colors.grey,
+        color: accentColor.withAlpha(200),
         fontSize: 14,
         height: 1.4,
         fontFamily: fontFamily,
       ),
-      titleSmall: TextStyle(
+      titleSmall: const TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.w400,
         fontFamily: fontFamily,
       ),
     ),
-    buttonTheme: const ButtonThemeData(
+    buttonTheme: ButtonThemeData(
       colorScheme: ColorScheme.dark(
-        surface: Color(0xFF302B36),
+        surface: accentColor.withAlpha(48),
       ),
     ),
   );

@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'dart:io';
 
+import 'package:historian/theme.dart';
+
 class ClipboardItemWidget extends StatelessWidget {
   const ClipboardItemWidget({
     super.key,
@@ -40,8 +42,9 @@ class ClipboardItemWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color:
-                          isSelected ? Colors.teal : Colors.blueGrey.shade700,
+                      color: isSelected
+                          ? AppTheme.getSelectionColor(context)
+                          : Colors.blueGrey.shade700,
                       width: isSelected ? 1.5 : 0.5,
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:historian/theme.dart';
 
 class AppVersionCard extends StatelessWidget {
   const AppVersionCard({
@@ -16,9 +17,9 @@ class AppVersionCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.content_paste,
-            color: Colors.teal,
+            color: AppTheme.lightThemeColor,
             size: 22,
           ),
           const SizedBox(width: 8),
