@@ -7,7 +7,7 @@ class AppTheme {
 
   static Color darken(Color color) {
     final hsl = HSLColor.fromColor(color);
-    final hslDark = hsl.withLightness((hsl.lightness - 0.4).clamp(0.0, 1.0));
+    final hslDark = hsl.withLightness((hsl.lightness - 0.2).clamp(0.0, 1.0));
     return hslDark.toColor();
   }
 
@@ -29,6 +29,12 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
         fontFamily: fontFamily,
+      ),
+      bodyMedium: const TextStyle(
+        fontFamily: fontFamily,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
       ),
       bodySmall: TextStyle(
         color: lightThemeColor.withAlpha(255),
@@ -56,6 +62,12 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w500,
         fontFamily: fontFamily,
+      ),
+      bodyMedium: const TextStyle(
+        fontFamily: fontFamily,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Colors.black,
       ),
       bodySmall: TextStyle(
         color: accentColor.withAlpha(200),
