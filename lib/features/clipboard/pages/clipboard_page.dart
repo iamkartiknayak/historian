@@ -5,6 +5,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'dart:io';
 
+import '../../../theme.dart';
 import '../widgets/custom_button.dart';
 import '../provider/clipboard_provider.dart';
 import '../widgets/clipboard_item_widget.dart';
@@ -109,9 +110,9 @@ void _showSnackBar(BuildContext context, String message) {
       duration: const Duration(milliseconds: 2000),
       content: Text(
         message,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
-      backgroundColor: Theme.of(context).buttonTheme.colorScheme!.surface,
+      backgroundColor: AppTheme.getSelectionColor(context),
     ),
   );
 }
