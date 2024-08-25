@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './features/home/pages/home_page.dart';
+
 void main() => runApp(const Historian());
 
 class Historian extends StatelessWidget {
@@ -10,14 +12,7 @@ class Historian extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Historian',
-      home: Scaffold(
-        body: Center(
-          child: Text(
-            'Historian',
-            style: TextStyle(fontSize: 50),
-          ),
-        ),
-      ),
+      home: HomePage(),
     );
   }
 }
