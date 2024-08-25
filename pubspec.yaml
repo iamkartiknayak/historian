@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.10+1
   provider: ^6.1.2
+  emojis: ^0.9.9
 
 dev_dependencies:
   flutter_test:
