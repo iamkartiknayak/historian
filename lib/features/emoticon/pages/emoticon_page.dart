@@ -1,13 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class EmoticonPage extends StatelessWidget {
+import '../../../common/custom_tab_bar.dart';
+import '../../../common/custom_tab_item.dart';
+import '../providers/emoticon_provider.dart';
+import '../widgets/build_emoticons.dart';
+import '../widgets/build_recent_emoticons.dart';
+
+class EmoticonPage extends StatefulWidget {
   const EmoticonPage({super.key});
 
   @override
+  State<EmoticonPage> createState() => _EmoticonPageState();
+}
+
+class _EmoticonPageState extends State<EmoticonPage>
+    with TickerProviderStateMixin {
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('EmoticonPage'),
+    final emoticonProvider = context.read<EmoticonProvider>();
+    emoticonProvider.initControllers(this);
+    final (showRecent) = context.select((EmoticonProvider p) => p.showRecent);
+
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50.0),
+          child: CustomTabBar(
+              onTap: emoticonProvider.updateTabIndex,
+              tabController: emoticonProvider.tabController,
+              tabs: const [
+                CustomTabItem(iconPath: 'assets/svgs/search.svg'),
+                CustomTabItem(iconPath: 'assets/svgs/recent.svg'),
+                CustomTabItem(iconPath: 'assets/svgs/list.svg'),
+              ]),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child:
+            showRecent ? const BuildRecentEmoticons() : const BuildEmoticons(),
       ),
     );
   }
