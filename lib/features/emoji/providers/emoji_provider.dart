@@ -42,6 +42,10 @@ class EmojiProvider extends ChangeNotifier {
   // public methods
   void initController(TickerProvider vsync) {
     if (_isInitialized) {
+      if (_tabController.index == 1 || _tabController.previousIndex == 1) {
+        return;
+      }
+
       _tabController.index = 2;
       return;
     }
