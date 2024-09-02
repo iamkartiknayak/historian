@@ -1,6 +1,7 @@
 import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
 
 class EmojiProvider extends ChangeNotifier {
   // getters
@@ -11,7 +12,6 @@ class EmojiProvider extends ChangeNotifier {
   ScrollController get scrollController => _scrollController;
   TextEditingController get searchController => _searchController;
 
-  int get currentTabIndex => _tabController.index;
   bool get showSearchBar => _showSearchBar;
   bool get showRecent => _showRecent;
 
@@ -70,7 +70,8 @@ class EmojiProvider extends ChangeNotifier {
   }
 
   void updateTabIndex(int index) {
-    tabController.index = index;
+    final currentTabIndex = index;
+    tabController.index = currentTabIndex;
 
     _showSearchBar = currentTabIndex == 0;
     _showRecent = currentTabIndex == 1;
