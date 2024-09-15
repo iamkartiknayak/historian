@@ -39,7 +39,7 @@ class EmojiProvider extends ChangeNotifier {
   };
 
   // public methods
-  void initController(TickerProvider vsync) {
+  void initControllers(TickerProvider vsync) {
     if (_isInitialized) {
       if (_tabController.index == 1 || _tabController.previousIndex == 1) {
         return;
@@ -49,7 +49,7 @@ class EmojiProvider extends ChangeNotifier {
       return;
     }
 
-    debugPrint('HomeProvider initControllers is called');
+    debugPrint('EmojiProvider initControllers is called');
     _initEmojiCategories();
     _searchResultList = [];
     _tabController = TabController(length: 10, vsync: vsync);
