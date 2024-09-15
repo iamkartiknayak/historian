@@ -7,19 +7,12 @@ import '../providers/emoticon_provider.dart';
 import '../widgets/build_emoticons.dart';
 import '../widgets/build_recent_emoticons.dart';
 
-class EmoticonPage extends StatefulWidget {
+class EmoticonPage extends StatelessWidget {
   const EmoticonPage({super.key});
 
   @override
-  State<EmoticonPage> createState() => _EmoticonPageState();
-}
-
-class _EmoticonPageState extends State<EmoticonPage>
-    with TickerProviderStateMixin {
-  @override
   Widget build(BuildContext context) {
     final emoticonProvider = context.read<EmoticonProvider>();
-    emoticonProvider.initControllers(this);
     final (showRecent) = context.select((EmoticonProvider p) => p.showRecent);
 
     return Scaffold(

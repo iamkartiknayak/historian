@@ -8,18 +8,12 @@ import '../providers/home_provider.dart';
 import '../widgets/home_tab_bar.dart';
 import '../widgets/settings_button.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  @override
   Widget build(BuildContext context) {
     debugPrint('HomePage build is called');
-    context.read<HomeProvider>().initControllers(this);
 
     return Scaffold(
       appBar: AppBar(

@@ -7,19 +7,13 @@ import '../providers/emoji_provider.dart';
 import '../widgets/build_emojis.dart';
 import '../widgets/build_recent_emojis.dart';
 
-class EmojiPage extends StatefulWidget {
+class EmojiPage extends StatelessWidget {
   const EmojiPage({super.key});
 
-  @override
-  State<EmojiPage> createState() => _EmojiPageState();
-}
-
-class _EmojiPageState extends State<EmojiPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     debugPrint('EmojiPage build is called');
     final emojiProvider = context.read<EmojiProvider>();
-    emojiProvider.initController(this);
     final showRecent = context.select((EmojiProvider p) => p.showRecent);
 
     return Scaffold(
