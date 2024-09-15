@@ -12,25 +12,31 @@ class ClipboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clipboardProvider = context.watch<ClipboardProvider>();
-    clipboardProvider.initClipboard();
+    final clipboardProvider = context.read<ClipboardProvider>();
 
-    final activeItemIndex = clipboardProvider.activeItemIndex;
-    final isClipboardEmpty = clipboardProvider.clipboard.isEmpty;
+    final (activeItemIndex, clipboardLength) = context.select(
+      (ClipboardProvider p) =>
+          (p.activeItemIndex, clipboardProvider.clipboard.length),
+    );
 
     return Scaffold(
-      body: !isClipboardEmpty
+      body: clipboardProvider.clipboard.isNotEmpty
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 CustomButton(
-                  label: 'Clear',
                   onTap: clipboardProvider.clearClipboard,
+                  label: 'Clear',
+                  margin: const EdgeInsets.only(
+                    top: 8.0,
+                    right: 16.0,
+                    bottom: 20.0,
+                  ),
                 ),
                 Expanded(
                   child: ListView.builder(
                     controller: clipboardProvider.scrollController,
-                    itemCount: clipboardProvider.clipboard.length,
+                    itemCount: clipboardLength,
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     itemBuilder: (context, index) {
                       final item = clipboardProvider.clipboard[index];
