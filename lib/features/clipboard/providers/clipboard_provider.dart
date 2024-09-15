@@ -14,6 +14,7 @@ class ClipboardProvider extends ChangeNotifier {
   List<dynamic> get clipboard => _clipboard;
   int get activeItemIndex => _activeItemIndex;
   ScrollController get scrollController => _scrollController;
+  int get clipboardSize => _clipboardSize;
 
   // private var
   late final List<dynamic> _clipboard;
@@ -23,15 +24,20 @@ class ClipboardProvider extends ChangeNotifier {
   late final String _homeDirPath;
   final now = DateTime.now();
   static const previewCharLimit = 280;
+  static const _clipboardMinSize = 5;
+  static const _clipboardMaxSize = 30;
 
   String _previousClipboardText = '';
   bool _isInitialized = false;
   bool _skipItem = false;
+  int _clipboardSize = 30;
+  Timer? _timer;
 
 // public methods
-  void initClipboard() async {
+  void initControllers() async {
     if (_isInitialized) return;
 
+    debugPrint('ClipboardProvider initControllers is called');
     _clipboard = [];
     _activeItemIndex = 0;
     _homeDirPath = Platform.environment['HOME']!;
@@ -94,6 +100,31 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void startModifyingClipboardSize(bool isIncremented) {
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if ((isIncremented && _clipboardSize == _clipboardMaxSize) ||
+          (!isIncremented && _clipboardSize == _clipboardMinSize)) {
+        timer.cancel();
+      }
+      updateClipboardSize(isIncremented);
+    });
+  }
+
+  void stopModifyingClipboardSize() => _timer?.cancel();
+
+  void updateClipboardSize(bool isIncremented) {
+    if (isIncremented && _clipboardSize == _clipboardMaxSize) return;
+    if (!isIncremented && _clipboardSize == _clipboardMinSize) return;
+
+    _clipboardSize += isIncremented ? 1 : -1;
+
+    if (!isIncremented && _clipboard.length > _clipboardSize) {
+      deleteItem(_clipboard.length - 1);
+    }
+
+    notifyListeners();
+  }
+
   // private methods
   void _createAppFolder() {
     final tempImagesDirPath = '$_homeDirPath/.historian/images';
@@ -139,6 +170,8 @@ class ClipboardProvider extends ChangeNotifier {
       _skipItem = false;
       return;
     }
+
+    if (_clipboard.length == _clipboardSize) deleteItem(_clipboard.length - 1);
 
     final previewLength =
         content.length <= previewCharLimit ? content.length : previewCharLimit;
