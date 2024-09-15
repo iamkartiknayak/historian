@@ -16,6 +16,8 @@ class CustomSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLightTheme = Theme.of(context).brightness == Brightness.light;
+
     return Selector<SettingsProvider, (Animation<double>, double, Color)>(
       selector: (_, p1) => (p1.animation, p1.categoryOneRadius, p1.accentColor),
       builder: (context, value, _) {
@@ -32,7 +34,9 @@ class CustomSwitch extends StatelessWidget {
                     value.$2,
                   ),
                   color: Color.lerp(
-                    const Color(0xFF33302f),
+                    isLightTheme
+                        ? Colors.grey.shade300
+                        : const Color(0xFF33302f),
                     value.$3,
                     value.$1.value,
                   ),
@@ -50,7 +54,9 @@ class CustomSwitch extends StatelessWidget {
                           borderRadius: BorderRadius.circular(
                             value.$2,
                           ),
-                          color: const Color(0xFF141517),
+                          color: isLightTheme
+                              ? Colors.white
+                              : const Color(0xFF141517),
                         ),
                       ),
                     ),
