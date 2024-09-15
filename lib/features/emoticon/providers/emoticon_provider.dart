@@ -33,7 +33,7 @@ class EmoticonProvider extends ChangeNotifier {
   void initControllers(TickerProvider vsync) {
     if (_isInitialized) return;
 
-    debugPrint('HomeProvider initControllers is called');
+    debugPrint('EmoticonProvider initControllers is called');
     _initEmoticonCategories();
     _searchResultList = [];
     _tabController = TabController(length: 3, vsync: vsync);
