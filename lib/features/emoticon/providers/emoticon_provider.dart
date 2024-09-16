@@ -88,6 +88,11 @@ class EmoticonProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleSearchBar() {
+    final previousIndex = _tabController.previousIndex;
+    updateTabIndex(_tabController.index != 0 ? 0 : previousIndex);
+  }
+
   // private methods
   void _initEmoticonCategories() {
     _categories = [

@@ -135,6 +135,11 @@ class EmojiProvider extends ChangeNotifier {
     }
   }
 
+  void toggleSearchBar() {
+    final previousIndex = _tabController.previousIndex;
+    updateTabIndex(_tabController.index != 0 ? 0 : previousIndex);
+  }
+
   // private methods
   void _handleScrollController() {
     final offset = _scrollController.offset;
