@@ -40,7 +40,9 @@ class _HistorianState extends State<Historian> with TickerProviderStateMixin {
       debugShowCheckedModeBanner: false,
       title: 'Historian',
       scaffoldMessengerKey: SnackBarService.scaffoldKey,
-      home: const HomePage(),
+      home: HomePage(
+        key: homePageKey,
+      ),
     );
   }
 }
