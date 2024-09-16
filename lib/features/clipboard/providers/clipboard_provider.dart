@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../../services/snackbar_service.dart';
 import '../models/text_item.dart';
 import '../utils/clipboard_utils.dart';
 
@@ -20,6 +21,8 @@ class ClipboardProvider extends ChangeNotifier {
   late final List<dynamic> _clipboard;
   late int _activeItemIndex;
   late final ScrollController _scrollController;
+  late final List<dynamic> _deletedItems;
+  late BuildContext _context;
 
   late final String _homeDirPath;
   final now = DateTime.now();
@@ -34,11 +37,13 @@ class ClipboardProvider extends ChangeNotifier {
   Timer? _timer;
 
 // public methods
-  void initControllers() async {
+  void initControllers(BuildContext context) async {
     if (_isInitialized) return;
 
     debugPrint('ClipboardProvider initControllers is called');
+    _context = context;
     _clipboard = [];
+    _deletedItems = [];
     _activeItemIndex = 0;
     _homeDirPath = Platform.environment['HOME']!;
     _scrollController = ScrollController();
@@ -76,9 +81,15 @@ class ClipboardProvider extends ChangeNotifier {
   void copyItem(int index) async {
     _skipItem = true;
     _activeItemIndex = index;
-    notifyListeners();
 
     _copyTextItem(index);
+    if (_context.mounted) {
+      SnackBarService.showSnackBar(
+        message: 'Text copied to clipboard',
+        context: _context,
+      );
+    }
+    notifyListeners();
   }
 
   void handleItemPin(int index) {
@@ -88,15 +99,16 @@ class ClipboardProvider extends ChangeNotifier {
   }
 
   void deleteItem(int index) {
-    final item = _clipboard[index];
-    final isText = item.id.startsWith('text:');
-
-    if (isText && item.textFilePath.isNotEmpty) {
-      File(item.textFilePath).deleteSync();
-    }
-
+    final deletedItem = _clipboard[index];
+    _deletedItems.add(deletedItem);
     _clipboard.removeAt(index);
     _activeItemIndex = activeItemIndex == 0 ? 0 : activeItemIndex - 1;
+
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'Item deleted',
+      showUndo: true,
+    );
     notifyListeners();
   }
 
@@ -122,6 +134,30 @@ class ClipboardProvider extends ChangeNotifier {
       deleteItem(_clipboard.length - 1);
     }
 
+    notifyListeners();
+  }
+
+  void undoDeleteItem() {
+    if (_deletedItems.isEmpty) return;
+
+    final deletedItem = _deletedItems.first;
+
+    _clipboard.insert(0, deletedItem);
+    _deletedItems.removeAt(0);
+    _activeItemIndex = 0;
+
+    notifyListeners();
+  }
+
+  void deleteItemPermanently() {
+    final item = _deletedItems[0];
+    final isText = item.id.startsWith('text:');
+
+    if (isText && item.textFilePath.isNotEmpty) {
+      File(item.textFilePath).deleteSync();
+    }
+
+    _deletedItems.removeAt(0);
     notifyListeners();
   }
 
