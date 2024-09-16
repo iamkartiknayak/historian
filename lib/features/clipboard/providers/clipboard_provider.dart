@@ -161,6 +161,25 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void keyboardNavScroll(bool descending) {
+    final currentOffset = _scrollController.offset;
+    final minScroll = _scrollController.position.minScrollExtent;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+
+    if ((descending && currentOffset >= maxScroll - 28) ||
+        (!descending && currentOffset <= minScroll + 28)) {
+      return;
+    }
+
+    final offset = currentOffset + (descending ? 125 : -125);
+    _scrollController.jumpTo(offset);
+  }
+
+  void setActiveItemIndex(int index) {
+    _activeItemIndex += index;
+    notifyListeners();
+  }
+
   // private methods
   void _createAppFolder() {
     final tempImagesDirPath = '$_homeDirPath/.historian/images';
