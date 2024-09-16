@@ -7,6 +7,7 @@ import './features/emoticon/providers/emoticon_provider.dart';
 import './features/home/pages/home_page.dart';
 import './features/home/providers/home_provider.dart';
 import './features/settings/providers/settings_provider.dart';
+import './services/snackbar_service.dart';
 
 void main() => runApp(MultiProvider(
       providers: [
@@ -30,15 +31,16 @@ class _HistorianState extends State<Historian> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     context.read<HomeProvider>().initControllers(this);
-    context.read<ClipboardProvider>().initControllers();
-    context.read<EmojiProvider>().initControllers(this);
-    context.read<EmoticonProvider>().initControllers(this);
+    context.read<ClipboardProvider>().initControllers(context);
+    context.read<EmojiProvider>().initControllers(this, context);
+    context.read<EmoticonProvider>().initControllers(this, context);
     context.read<SettingsProvider>().initControllers(this);
 
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Historian',
-      home: HomePage(),
+      scaffoldMessengerKey: SnackBarService.scaffoldKey,
+      home: const HomePage(),
     );
   }
 }
