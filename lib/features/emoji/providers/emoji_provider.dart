@@ -2,6 +2,8 @@ import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../services/snackbar_service.dart';
+
 class EmojiProvider extends ChangeNotifier {
   // getters
   static List<(String, Iterable<Emoji>)> get categories => _categories;
@@ -21,6 +23,7 @@ class EmojiProvider extends ChangeNotifier {
   late final TabController _tabController;
   late final ScrollController _scrollController;
   late final TextEditingController _searchController;
+  late BuildContext _context;
 
   bool _showSearchBar = false;
   bool _showRecent = false;
@@ -39,7 +42,7 @@ class EmojiProvider extends ChangeNotifier {
   };
 
   // public methods
-  void initControllers(TickerProvider vsync) {
+  void initControllers(TickerProvider vsync, BuildContext context) {
     if (_isInitialized) {
       if (_tabController.index == 1 || _tabController.previousIndex == 1) {
         return;
@@ -50,6 +53,7 @@ class EmojiProvider extends ChangeNotifier {
     }
 
     debugPrint('EmojiProvider initControllers is called');
+    _context = context;
     _initEmojiCategories();
     _searchResultList = [];
     _tabController = TabController(length: 10, vsync: vsync);
@@ -74,9 +78,11 @@ class EmojiProvider extends ChangeNotifier {
 
     _showSearchBar = currentTabIndex == 0;
     _showRecent = currentTabIndex == 1;
-    notifyListeners();
 
-    if (currentTabIndex < 2) return;
+    if (currentTabIndex < 2) {
+      notifyListeners();
+      return;
+    }
 
     _searchController.clear();
 
@@ -84,7 +90,13 @@ class EmojiProvider extends ChangeNotifier {
 
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(categoryOffset);
+    } else {
+      Future.delayed(
+        const Duration(milliseconds: 50),
+        () => _scrollController.jumpTo(categoryOffset),
+      );
     }
+
     notifyListeners();
   }
 
@@ -95,7 +107,13 @@ class EmojiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void copyEmoji(String emoji) => Clipboard.setData(ClipboardData(text: emoji));
+  void copyEmoji(String emoji) {
+    Clipboard.setData(ClipboardData(text: emoji));
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'Emoji copied to clipboard',
+    );
+  }
 
   void searchEmoji(String query) {
     _searchResultList = Emoji.all().where(
