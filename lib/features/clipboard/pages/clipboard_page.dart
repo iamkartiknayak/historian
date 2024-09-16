@@ -12,20 +12,16 @@ class ClipboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clipboardProvider = context.read<ClipboardProvider>();
-
-    final (activeItemIndex, clipboardLength) = context.select(
-      (ClipboardProvider p) =>
-          (p.activeItemIndex, clipboardProvider.clipboard.length),
-    );
+    final provider = context.watch<ClipboardProvider>();
+    final activeItemIndex = provider.activeItemIndex;
 
     return Scaffold(
-      body: clipboardProvider.clipboard.isNotEmpty
+      body: provider.clipboard.isNotEmpty
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 CustomButton(
-                  onTap: clipboardProvider.clearClipboard,
+                  onTap: provider.clearClipboard,
                   label: 'Clear',
                   margin: const EdgeInsets.only(
                     top: 8.0,
@@ -35,15 +31,15 @@ class ClipboardPage extends StatelessWidget {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    controller: clipboardProvider.scrollController,
-                    itemCount: clipboardLength,
+                    controller: provider.scrollController,
+                    itemCount: provider.clipboard.length,
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     itemBuilder: (context, index) {
-                      final item = clipboardProvider.clipboard[index];
+                      final item = provider.clipboard[index];
                       final isActive = activeItemIndex == index;
 
                       return ClipboardItemLayout(
-                        onTap: () => clipboardProvider.copyItem(index),
+                        onTap: () => provider.copyItem(index),
                         isActive: isActive,
                         child: TextItemWidget(index: index, item: item),
                       );
