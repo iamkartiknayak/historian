@@ -26,6 +26,7 @@ class CustomSearchBox extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
+        autofocus: true,
         style: Theme.of(context).textTheme.labelMedium!.copyWith(
               fontSize: 18.0,
             ),
