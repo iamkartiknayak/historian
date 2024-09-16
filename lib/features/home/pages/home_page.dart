@@ -8,12 +8,22 @@ import '../providers/home_provider.dart';
 import '../widgets/home_tab_bar.dart';
 import '../widgets/settings_button.dart';
 
-class HomePage extends StatelessWidget {
+final GlobalKey<HomePageState> homePageKey = GlobalKey<HomePageState>();
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
+  int homeTabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     debugPrint('HomePage build is called');
+    homeTabIndex = context.select((HomeProvider p) => p.currentTabIndex);
 
     return Scaffold(
       appBar: AppBar(
