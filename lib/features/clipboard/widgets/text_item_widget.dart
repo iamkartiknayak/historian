@@ -28,7 +28,7 @@ class TextItemWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontFamily: onlyEmoticons ? 'NotoColorEmoji' : 'Inter',
                   fontSize: onlyEmoticons ? 28.0 : null,
-                ), // =>
+                ),
           ),
         ),
         BuildItemActions(index: index)

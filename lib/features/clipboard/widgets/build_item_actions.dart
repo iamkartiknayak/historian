@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/clipboard_provider.dart';
-import 'action_icon_button.dart';
+import './action_icon_button.dart';
 
 class BuildItemActions extends StatelessWidget {
   const BuildItemActions({
