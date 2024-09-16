@@ -14,6 +14,7 @@ class EmojiPage extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('EmojiPage build is called');
     final emojiProvider = context.read<EmojiProvider>();
+    emojiProvider.resetEmojiTabbar();
     final showRecent = context.select((EmojiProvider p) => p.showRecent);
 
     return Scaffold(
