@@ -124,6 +124,17 @@ class EmojiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void resetEmojiTabbar() {
+    {
+      if (_tabController.index == 1 || _tabController.previousIndex == 1) {
+        return;
+      }
+
+      _tabController.index = 2;
+      return;
+    }
+  }
+
   // private methods
   void _handleScrollController() {
     final offset = _scrollController.offset;
