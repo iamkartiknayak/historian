@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../services/snackbar_service.dart';
 import '../models/emoticon.dart';
 
 class EmoticonProvider extends ChangeNotifier {
@@ -23,6 +24,7 @@ class EmoticonProvider extends ChangeNotifier {
   late final TabController _tabController;
   late final ScrollController _scrollController;
   late final TextEditingController _searchController;
+  late BuildContext _context;
 
   bool _showSearchBar = false;
   bool _showRecent = false;
@@ -30,10 +32,11 @@ class EmoticonProvider extends ChangeNotifier {
   bool _isInitialized = false;
 
   // public methods
-  void initControllers(TickerProvider vsync) {
+  void initControllers(TickerProvider vsync, BuildContext context) {
     if (_isInitialized) return;
 
     debugPrint('EmoticonProvider initControllers is called');
+    _context = context;
     _initEmoticonCategories();
     _searchResultList = [];
     _tabController = TabController(length: 3, vsync: vsync);
@@ -68,8 +71,13 @@ class EmoticonProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void copyEmoticon(String emoticon) =>
-      Clipboard.setData(ClipboardData(text: emoticon));
+  void copyEmoticon(String emoticon) {
+    Clipboard.setData(ClipboardData(text: emoticon));
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'Emoticon copied to clipboard',
+    );
+  }
 
   void searchEmoticon(String query) {
     _searchResultList = Emoticons.all().where(
