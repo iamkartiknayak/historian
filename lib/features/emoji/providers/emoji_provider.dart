@@ -126,7 +126,7 @@ class EmojiProvider extends ChangeNotifier {
 
   void resetEmojiTabbar() {
     {
-      if (_tabController.index == 1 || _tabController.previousIndex == 1) {
+      if (_tabController.index == 0 || _tabController.index == 1) {
         return;
       }
 
