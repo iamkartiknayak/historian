@@ -40,7 +40,7 @@ class _HistorianState extends State<Historian> with TickerProviderStateMixin {
     context.read<ClipboardProvider>().initControllers(context);
     context.read<EmojiProvider>().initControllers(this, context);
     context.read<EmoticonProvider>().initControllers(this, context);
-    context.read<SettingsProvider>().initControllers(this);
+    context.read<SettingsProvider>().initControllers(this, context);
 
     final (accentColor, categoryOneRadius, categoryTwoRadius) = context.select(
       (SettingsProvider p) => (
