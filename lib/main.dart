@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:system_theme/system_theme.dart';
 
+import './app_theme.dart';
 import './features/clipboard/providers/clipboard_provider.dart';
 import './features/emoji/providers/emoji_provider.dart';
 import './features/emoticon/providers/emoticon_provider.dart';
@@ -9,16 +11,20 @@ import './features/home/providers/home_provider.dart';
 import './features/settings/providers/settings_provider.dart';
 import './services/snackbar_service.dart';
 
-void main() => runApp(MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => HomeProvider()),
-        ChangeNotifierProvider(create: (_) => ClipboardProvider()),
-        ChangeNotifierProvider(create: (_) => EmojiProvider()),
-        ChangeNotifierProvider(create: (_) => EmoticonProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
-      ],
-      child: const Historian(),
-    ));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => HomeProvider()),
+      ChangeNotifierProvider(create: (_) => ClipboardProvider()),
+      ChangeNotifierProvider(create: (_) => EmojiProvider()),
+      ChangeNotifierProvider(create: (_) => EmoticonProvider()),
+      ChangeNotifierProvider(create: (_) => SettingsProvider()),
+    ],
+    child: const Historian(),
+  ));
+}
 
 class Historian extends StatefulWidget {
   const Historian({super.key});
@@ -36,12 +42,31 @@ class _HistorianState extends State<Historian> with TickerProviderStateMixin {
     context.read<EmoticonProvider>().initControllers(this, context);
     context.read<SettingsProvider>().initControllers(this);
 
+    final (accentColor, categoryOneRadius, categoryTwoRadius) = context.select(
+      (SettingsProvider p) => (
+        p.accentColor,
+        p.categoryOneRadius,
+        p.categoryTwoRadius,
+      ),
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Historian',
+      theme: AppTheme.lightTheme(accentColor, (
+        categoryOneRadius,
+        categoryTwoRadius,
+      )),
+      darkTheme: AppTheme.darkTheme(accentColor, (
+        categoryOneRadius,
+        categoryTwoRadius,
+      )),
       scaffoldMessengerKey: SnackBarService.scaffoldKey,
-      home: HomePage(
-        key: homePageKey,
+      home: SystemThemeBuilder(
+        builder: (context, color) {
+          AppTheme.setAccentPallete(context);
+          return HomePage(key: homePageKey);
+        },
       ),
     );
   }
