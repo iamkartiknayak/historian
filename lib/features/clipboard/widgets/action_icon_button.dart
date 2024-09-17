@@ -21,7 +21,7 @@ class ActionIconButton extends StatelessWidget {
         svgPath,
         height: height ?? 20.0,
         colorFilter: ColorFilter.mode(
-          Theme.of(context).colorScheme.onSurface,
+          Theme.of(context).primaryColor.withAlpha(255),
           BlendMode.srcIn,
         ),
       ),
