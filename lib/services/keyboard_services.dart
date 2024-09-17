@@ -77,6 +77,8 @@ class KeyboardService {
 
   static void _handleClipboardPage(KeyEvent event, ClipboardProvider provider) {
     final activeItemIndex = provider.activeItemIndex;
+    if (provider.clipboard.isEmpty) return;
+
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
       final isLowerBound = activeItemIndex <= 0;
       provider.setActiveItemIndex(isLowerBound ? 0 : -1);
