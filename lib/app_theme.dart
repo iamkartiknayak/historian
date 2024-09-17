@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'features/settings/providers/settings_provider.dart';
 
 class AppTheme {
+  static const fontFamily = 'Inter';
+
   static void setAccentPallete(BuildContext context) {
     final isLightTheme = Theme.of(context).brightness == Brightness.light;
     Future(() {
@@ -36,6 +38,30 @@ class AppTheme {
           categoryTwoRadius: borderRadius.$2,
         ),
       ],
+      textTheme: const TextTheme(
+        bodyMedium: TextStyle(
+          fontFamily: fontFamily,
+          color: Colors.black,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w200,
+        ),
+        displayMedium: TextStyle(
+          fontFamily: fontFamily,
+          color: Colors.black,
+          fontSize: 18.0,
+        ),
+        labelLarge: TextStyle(
+          fontFamily: fontFamily,
+          color: Colors.black,
+          fontSize: 20.0,
+        ),
+        labelMedium: TextStyle(
+          fontFamily: fontFamily,
+          color: Colors.black,
+          fontSize: 14.0,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
     );
   }
 
@@ -61,6 +87,26 @@ class AppTheme {
           categoryTwoRadius: borderRadius.$2,
         ),
       ],
+      textTheme: const TextTheme(
+        bodyMedium: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 16.0,
+          fontWeight: FontWeight.w200,
+        ),
+        displayMedium: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 18.0,
+        ),
+        labelLarge: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 20.0,
+        ),
+        labelMedium: TextStyle(
+          fontFamily: fontFamily,
+          fontSize: 14.0,
+          fontWeight: FontWeight.w400,
+        ),
+      ),
     );
   }
 }
