@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../app_theme.dart';
+
 class ClipboardItemLayout extends StatelessWidget {
   const ClipboardItemLayout({
     super.key,
@@ -14,6 +16,8 @@ class ClipboardItemLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = Theme.of(context).extension<BorderRadiusTheme>();
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -26,10 +30,12 @@ class ClipboardItemLayout extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isActive ? Colors.teal : Colors.grey,
-            width: isActive ? 1.5 : 0.8,
+            color: isActive
+                ? Theme.of(context).primaryColor
+                : Theme.of(context).primaryColor.withOpacity(0.4),
+            width: 1.5,
           ),
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(borderRadius!.categoryTwoRadius),
         ),
         child: child,
       ),

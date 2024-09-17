@@ -16,7 +16,6 @@ class HomeTabBar extends StatelessWidget {
     return TabBar(
       onTap: homeProvider.updateTabIndex,
       controller: homeProvider.tabController,
-      indicatorColor: Colors.teal,
       tabs: [
         HomeTabItem(
           iconPath: 'assets/svgs/clipboard',

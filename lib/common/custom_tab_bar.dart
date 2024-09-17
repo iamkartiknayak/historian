@@ -19,7 +19,6 @@ class CustomTabBar extends StatelessWidget {
     return TabBar(
       onTap: onTap,
       controller: tabController,
-      indicatorColor: Colors.teal,
       isScrollable: true,
       tabAlignment: TabAlignment.start,
       tabs: tabs,

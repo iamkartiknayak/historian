@@ -35,7 +35,6 @@ class SnackBarService {
                   ),
               ],
             ),
-            backgroundColor: Colors.teal,
           ),
         )
         .closed

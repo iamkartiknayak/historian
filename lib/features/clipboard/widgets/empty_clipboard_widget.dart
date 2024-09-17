@@ -16,7 +16,7 @@ class EmptyClipboardWidget extends StatelessWidget {
             child: Image.asset(
               'assets/images/empty_clipboard.png',
               height: 100.0,
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Theme.of(context).primaryColor,
             ),
           ),
           Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:historian/app_theme.dart';
 
 class CustomSearchBox extends StatelessWidget {
   const CustomSearchBox({
@@ -16,12 +17,13 @@ class CustomSearchBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLightTheme = Theme.of(context).brightness == Brightness.light;
+    final borderRadius = Theme.of(context).extension<BorderRadiusTheme>();
 
     return Container(
       margin: const EdgeInsets.only(top: 12.0),
       decoration: BoxDecoration(
         color: Colors.grey.withAlpha(60),
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(borderRadius!.categoryTwoRadius),
       ),
       child: TextField(
         controller: controller,
@@ -44,8 +46,8 @@ class CustomSearchBox extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12.0, 0.0, 12.0, 0.0),
             child: SvgPicture.asset(
               'assets/svgs/search.svg',
-              colorFilter: const ColorFilter.mode(
-                Colors.teal,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).primaryColor,
                 BlendMode.srcIn,
               ),
             ),

@@ -18,8 +18,8 @@ class HomeTabItem extends StatelessWidget {
     return Tab(
       icon: SvgPicture.asset(
         '$icon.svg',
-        colorFilter: const ColorFilter.mode(
-          Colors.teal,
+        colorFilter: ColorFilter.mode(
+          Theme.of(context).primaryColor,
           BlendMode.srcIn,
         ),
         fit: BoxFit.fitHeight,

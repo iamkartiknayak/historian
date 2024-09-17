@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:historian/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/emoji_provider.dart';
@@ -17,6 +18,7 @@ class EmojiItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final emojisProvider = context.read<EmojiProvider>();
     final isHovered = context.select((EmojiProvider p) => p.isHovering(index));
+    final borderRadius = Theme.of(context).extension<BorderRadiusTheme>();
 
     return GestureDetector(
       onTap: () => emojisProvider.copyEmoji(emoji),
@@ -33,10 +35,9 @@ class EmojiItem extends StatelessWidget {
                   vertical: 8.0,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.teal.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(
-                    20.0,
-                  ),
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  borderRadius:
+                      BorderRadius.circular(borderRadius!.categoryTwoRadius),
                 ),
               ),
             Text(

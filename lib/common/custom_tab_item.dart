@@ -14,8 +14,8 @@ class CustomTabItem extends StatelessWidget {
     return Tab(
       icon: SvgPicture.asset(
         iconPath,
-        colorFilter: const ColorFilter.mode(
-          Colors.teal,
+        colorFilter: ColorFilter.mode(
+          Theme.of(context).primaryColor,
           BlendMode.srcIn,
         ),
         fit: BoxFit.fitHeight,
