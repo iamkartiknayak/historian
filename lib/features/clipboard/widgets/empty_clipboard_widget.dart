@@ -16,7 +16,7 @@ class EmptyClipboardWidget extends StatelessWidget {
             child: Image.asset(
               'assets/images/empty_clipboard.png',
               height: 100.0,
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           Text(
@@ -27,7 +27,7 @@ class EmptyClipboardWidget extends StatelessWidget {
           const SizedBox(height: 10.0),
           Text(
             'You\'ll see your clipboard history once you\'ve copied something.',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 50.0)

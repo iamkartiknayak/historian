@@ -35,7 +35,7 @@ class SettingsPage extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text(
                     'Settings',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: Theme.of(context).textTheme.displayMedium,
                   ),
                 ),
               ],
@@ -46,7 +46,7 @@ class SettingsPage extends StatelessWidget {
               children: [
                 Text(
                   'Clipboard',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.displayMedium,
                 ),
                 CustomSwitch(
                   onTap:
@@ -83,7 +83,7 @@ class SettingsPage extends StatelessWidget {
             const SizedBox(height: 32.0),
             Text(
               'Personalization',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(height: 8.0),
             const Text('Accent colors'),

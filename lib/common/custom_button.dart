@@ -61,7 +61,7 @@ class CustomButton extends StatelessWidget {
                   svgPath!,
                   height: svgHeight ?? 20.0,
                   colorFilter: ColorFilter.mode(
-                    Theme.of(context).textTheme.labelMedium!.color!,
+                    Theme.of(context).colorScheme.onSurface,
                     BlendMode.srcIn,
                   ),
                 ),

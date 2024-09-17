@@ -24,8 +24,8 @@ class SnackBarService {
               children: [
                 Text(
                   message,
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Colors.black,
+                  style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                        fontSize: 14.0,
                       ),
                 ),
                 if (showUndo)
@@ -74,8 +74,10 @@ class _UndoButton extends StatelessWidget {
       },
       child: Text(
         'Undo',
-        style: Theme.of(context).textTheme.labelMedium!.copyWith(
+        style: Theme.of(context).textTheme.displayMedium!.copyWith(
+              fontSize: 14.0,
               color: Colors.black,
+              fontWeight: FontWeight.w500,
             ),
       ),
     );
