@@ -85,7 +85,6 @@ class KeyboardService {
       final isUpperBound = activeItemIndex >= provider.clipboard.length - 1;
       provider.setActiveItemIndex(isUpperBound ? 0 : 1);
       provider.keyboardNavScroll(true);
-      debugPrint('Arrow down: Index 0');
     } else if (_pressedKeys.contains(LogicalKeyboardKey.controlLeft)) {
       switch (event.logicalKey) {
         case LogicalKeyboardKey.keyS:
