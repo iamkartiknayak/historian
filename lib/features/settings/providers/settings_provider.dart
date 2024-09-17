@@ -23,7 +23,7 @@ class SettingsProvider extends ChangeNotifier {
   int _accentColorIndex = 0;
   bool _isClipboardListening = true;
 
-  final List<Color> _lightAccentColors = [
+  final List<Color> _darkAccentColors = [
     const Color(0xFF62d0df), // 1
     const Color(0xFFa0bfeb), // 2
     const Color(0xFFe89cff), // 3
@@ -32,6 +32,17 @@ class SettingsProvider extends ChangeNotifier {
     const Color(0xFFf8e062), // 6
     const Color(0xFF93cf9c), // 7
     const Color(0xFFccb9b5), // 8
+  ];
+
+  final List<Color> _lightAccentColors = [
+    const Color(0xFF4ea6b2), //1
+    const Color(0xFF8099bc), //2
+    const Color(0xFFba7dcc), //3
+    const Color(0xFFcc7d8e), //4
+    const Color(0xFFcc8a01), //5
+    const Color(0xFFc6b34e), //6
+    const Color(0xFF76a67d), //7
+    const Color(0xFFa39491), //8
   ];
 
   bool _isInitialized = false;
@@ -91,6 +102,11 @@ class SettingsProvider extends ChangeNotifier {
   void toggleClipboardListener() {
     _isClipboardListening = !_isClipboardListening;
     _toggleSwitch();
+  }
+
+  void setAccentPallete(bool isLightTheme) {
+    _accentColors = isLightTheme ? _lightAccentColors : _darkAccentColors;
+    setAccentColor(_accentColorIndex);
   }
 
   // private methods
