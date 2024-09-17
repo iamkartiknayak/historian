@@ -33,6 +33,7 @@ class ClipboardProvider extends ChangeNotifier {
   String _previousClipboardText = '';
   bool _isInitialized = false;
   bool _skipItem = false;
+  bool _pauseClipboard = false;
   int _clipboardSize = 30;
   Timer? _timer;
 
@@ -98,7 +99,12 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteItem(int index) {
+  void deleteItem(int index, {showSnackbar = true}) {
+    if (!showSnackbar) {
+      _clipboard.removeAt(index);
+      return;
+    }
+
     final deletedItem = _clipboard[index];
     _deletedItems.add(deletedItem);
     _clipboard.removeAt(index);
@@ -131,7 +137,7 @@ class ClipboardProvider extends ChangeNotifier {
     _clipboardSize += isIncremented ? 1 : -1;
 
     if (!isIncremented && _clipboard.length > _clipboardSize) {
-      deleteItem(_clipboard.length - 1);
+      deleteItem(_clipboard.length - 1, showSnackbar: false);
     }
 
     notifyListeners();
@@ -141,6 +147,10 @@ class ClipboardProvider extends ChangeNotifier {
     if (_deletedItems.isEmpty) return;
 
     final deletedItem = _deletedItems.first;
+
+    if (_clipboard.length == _clipboardSize) {
+      deleteItem(_clipboard.length - 1, showSnackbar: false);
+    }
 
     _clipboard.insert(0, deletedItem);
     _deletedItems.removeAt(0);
@@ -180,6 +190,17 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleClipboardListener() {
+    _pauseClipboard = !_pauseClipboard;
+    final clipboardStatus = _pauseClipboard ? 'paused' : 'resumed';
+
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'Clipboard has been $clipboardStatus',
+    );
+    notifyListeners();
+  }
+
   // private methods
   void _createAppFolder() {
     final tempImagesDirPath = '$_homeDirPath/.historian/images';
@@ -201,6 +222,7 @@ class ClipboardProvider extends ChangeNotifier {
 
   void _startListening() async {
     Timer.periodic(const Duration(milliseconds: 100), (_) async {
+      if (_pauseClipboard) return;
       ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
 
       final content = data?.text;
@@ -226,7 +248,9 @@ class ClipboardProvider extends ChangeNotifier {
       return;
     }
 
-    if (_clipboard.length == _clipboardSize) deleteItem(_clipboard.length - 1);
+    if (_clipboard.length == _clipboardSize) {
+      deleteItem(_clipboard.length - 1, showSnackbar: false);
+    }
 
     final previewLength =
         content.length <= previewCharLimit ? content.length : previewCharLimit;

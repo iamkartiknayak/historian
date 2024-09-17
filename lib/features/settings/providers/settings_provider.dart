@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../clipboard/providers/clipboard_provider.dart';
 
 class SettingsProvider extends ChangeNotifier {
   // getters
@@ -16,6 +19,7 @@ class SettingsProvider extends ChangeNotifier {
   late List<Color> _accentColors;
   late AnimationController _animationController;
   late Animation<double> _animation;
+  late final BuildContext _context;
 
   double _categoryOneRadius = 8.0; // more rounded => switch, color palette
   double _categoryTwoRadius = 8.0; // more curved => clipboard item, buttons
@@ -48,10 +52,11 @@ class SettingsProvider extends ChangeNotifier {
   bool _isInitialized = false;
 
   // public methods
-  void initControllers(TickerProvider vsync) {
+  void initControllers(TickerProvider vsync, BuildContext context) {
     if (_isInitialized) return;
 
     debugPrint('SettingsProvider initControllers is called');
+    _context = context;
     _accentColors = _lightAccentColors;
     _animationController = AnimationController(
       vsync: vsync,
@@ -101,6 +106,7 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleClipboardListener() {
     _isClipboardListening = !_isClipboardListening;
+    _context.read<ClipboardProvider>().toggleClipboardListener();
     _toggleSwitch();
   }
 
