@@ -20,6 +20,7 @@ class AppTheme {
     return ThemeData.light().copyWith(
       primaryColor: accentColor,
       highlightColor: Colors.transparent,
+      focusColor: Colors.transparent,
       splashFactory: NoSplash.splashFactory,
       textSelectionTheme: TextSelectionThemeData(
         selectionColor: accentColor.withOpacity(0.4),
@@ -69,6 +70,7 @@ class AppTheme {
     return ThemeData.dark().copyWith(
       primaryColor: accentColor,
       highlightColor: Colors.transparent,
+      focusColor: Colors.transparent,
       splashFactory: NoSplash.splashFactory,
       textSelectionTheme: TextSelectionThemeData(
         selectionColor: accentColor.withOpacity(0.4),
