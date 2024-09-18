@@ -11,6 +11,11 @@ class Emoticon {
 class Emoticons {
   static List<Emoticon> all() => List.unmodifiable(_emoticons);
 
+  static Emoticon? byChar(String char) {
+    return _emoticons
+        .firstWhere((Emoticon emoticon) => emoticon.symbol == char);
+  }
+
   static const Iterable<Emoticon> _emoticons = [
     Emoticon(symbol: ':)', name: 'Smiling Face'),
     Emoticon(symbol: ':(', name: 'Sad Face'),
