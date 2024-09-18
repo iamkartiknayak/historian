@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../common/category_header.dart';
+import '../providers/emoji_provider.dart';
+import './emoji_grid_view.dart';
 
-// TODO: Implement recent feat
 class BuildRecentEmojis extends StatelessWidget {
   const BuildRecentEmojis({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const CustomScrollView(
+    return CustomScrollView(
       slivers: [
-        CategoryHeader(label: 'Recents'),
+        const CategoryHeader(label: 'Recents'),
+        EmojiGridView(emojis: context.read<EmojiProvider>().getRecentEmojis())
       ],
     );
   }

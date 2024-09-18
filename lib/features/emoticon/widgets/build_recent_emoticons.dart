@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../common/category_header.dart';
+import '../providers/emoticon_provider.dart';
+import './emoticon_grid_view.dart';
 
-// TODO: Implement recent feat
 class BuildRecentEmoticons extends StatelessWidget {
   const BuildRecentEmoticons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const CustomScrollView(
+    return CustomScrollView(
       slivers: [
-        CategoryHeader(label: 'Recents'),
+        const CategoryHeader(label: 'Recents'),
+        EmoticonGridView(
+          emoticons: context.read<EmoticonProvider>().getRecentEmoticons(),
+        )
       ],
     );
   }

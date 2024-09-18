@@ -1,6 +1,7 @@
 import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../services/snackbar_service.dart';
 
@@ -23,7 +24,9 @@ class EmojiProvider extends ChangeNotifier {
   late final TabController _tabController;
   late final ScrollController _scrollController;
   late final TextEditingController _searchController;
-  late BuildContext _context;
+  late final BuildContext _context;
+  late final Box<dynamic> _recents;
+  late final List<dynamic> _recentEmojis;
 
   bool _showSearchBar = false;
   bool _showRecent = false;
@@ -53,6 +56,8 @@ class EmojiProvider extends ChangeNotifier {
     }
 
     debugPrint('EmojiProvider initControllers is called');
+    _recents = Hive.box('recents');
+    _recentEmojis = _recents.get('emojis', defaultValue: [])!;
     _context = context;
     _initEmojiCategories();
     _searchResultList = [];
@@ -113,6 +118,11 @@ class EmojiProvider extends ChangeNotifier {
       context: _context,
       message: 'Emoji copied to clipboard',
     );
+
+    _recentEmojis.remove(emoji);
+    _recentEmojis.insert(0, emoji);
+    _recents.put('emojis', _recentEmojis);
+    if (_recentEmojis.length > 30) _recentEmojis.removeLast();
   }
 
   void searchEmoji(String query) {
@@ -139,6 +149,9 @@ class EmojiProvider extends ChangeNotifier {
     final previousIndex = _tabController.previousIndex;
     updateTabIndex(_tabController.index != 0 ? 0 : previousIndex);
   }
+
+  Iterable<Emoji> getRecentEmojis() =>
+      _recentEmojis.map((emojiChar) => Emoji.byChar(emojiChar)!);
 
   // private methods
   void _handleScrollController() {

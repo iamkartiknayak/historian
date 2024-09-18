@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../services/snackbar_service.dart';
 import '../models/emoticon.dart';
@@ -24,7 +25,9 @@ class EmoticonProvider extends ChangeNotifier {
   late final TabController _tabController;
   late final ScrollController _scrollController;
   late final TextEditingController _searchController;
-  late BuildContext _context;
+  late final BuildContext _context;
+  late final Box<dynamic> _recents;
+  late final List<dynamic> _recentEmoticons;
 
   bool _showSearchBar = false;
   bool _showRecent = false;
@@ -36,6 +39,8 @@ class EmoticonProvider extends ChangeNotifier {
     if (_isInitialized) return;
 
     debugPrint('EmoticonProvider initControllers is called');
+    _recents = Hive.box('recents');
+    _recentEmoticons = _recents.get('emoticons', defaultValue: [])!;
     _context = context;
     _initEmoticonCategories();
     _searchResultList = [];
@@ -77,6 +82,11 @@ class EmoticonProvider extends ChangeNotifier {
       context: _context,
       message: 'Emoticon copied to clipboard',
     );
+
+    _recentEmoticons.remove(emoticon);
+    _recentEmoticons.insert(0, emoticon);
+    _recents.put('emoticons', _recentEmoticons);
+    if (_recentEmoticons.length > 30) _recentEmoticons.removeLast();
   }
 
   void searchEmoticon(String query) {
@@ -92,6 +102,9 @@ class EmoticonProvider extends ChangeNotifier {
     final previousIndex = _tabController.previousIndex;
     updateTabIndex(_tabController.index != 0 ? 0 : previousIndex);
   }
+
+  Iterable<Emoticon> getRecentEmoticons() =>
+      _recentEmoticons.map((emojiChar) => Emoticons.byChar(emojiChar)!);
 
   // private methods
   void _initEmoticonCategories() {
