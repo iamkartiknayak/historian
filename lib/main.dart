@@ -16,6 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('settingsConfig');
+  await Hive.openBox('recents');
 
   runApp(MultiProvider(
     providers: [
