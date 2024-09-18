@@ -1,3 +1,4 @@
+import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -7,14 +8,15 @@ import '../../clipboard/providers/clipboard_provider.dart';
 class SettingsProvider extends ChangeNotifier {
   // getters
   List<Color> get accentColors => _accentColors;
-  int get accentColorLength => _accentColors.length;
   int get accentColorIndex => _accentColorIndex;
+  int get fitzpatrickScaleIndex => _fitzpatrickScaleIndex;
   double get categoryOneRadius => _categoryOneRadius;
   double get categoryTwoRadius => _categoryTwoRadius;
   int get selectedBorderRadiusConfig => _selectedBorderRadiusConfig;
   Color get accentColor => _accentColors[_accentColorIndex];
   bool get isClipboardListening => _isClipboardListening;
   Animation<double> get animation => _animation;
+  fitzpatrick get skinTone => _skinTone;
 
   // private var
   late List<Color> _accentColors;
@@ -27,6 +29,8 @@ class SettingsProvider extends ChangeNotifier {
   double _categoryTwoRadius = 8.0; // more curved => clipboard item, buttons
   int _selectedBorderRadiusConfig = 1;
   int _accentColorIndex = 0;
+  int _fitzpatrickScaleIndex = 0;
+  fitzpatrick _skinTone = fitzpatrick.None;
   bool _isClipboardListening = true;
 
   final List<Color> _darkAccentColors = [
@@ -49,6 +53,15 @@ class SettingsProvider extends ChangeNotifier {
     const Color(0xFFc6b34e), //6
     const Color(0xFF76a67d), //7
     const Color(0xFFa39491), //8
+  ];
+
+  final List<Color> fitzpatrickScaleColors = [
+    const Color(0xFFFFCC22),
+    const Color(0xFFFFCCB0),
+    const Color(0xFFE0B387),
+    const Color(0xFFD18B61),
+    const Color(0xFFA86943),
+    const Color(0xFF5A463A),
   ];
 
   bool _isInitialized = false;
@@ -120,6 +133,33 @@ class SettingsProvider extends ChangeNotifier {
   void setAccentPallete(bool isLightTheme) {
     _accentColors = isLightTheme ? _lightAccentColors : _darkAccentColors;
     setAccentColor(_accentColorIndex);
+  }
+
+  void setFitzpatrickScaleColor(int index) {
+    _fitzpatrickScaleIndex = index;
+    settingsConfig.put('fitzpatrickScaleIndex', _fitzpatrickScaleIndex);
+
+    switch (index) {
+      case 0:
+        _skinTone = fitzpatrick.None;
+        break;
+      case 1:
+        _skinTone = fitzpatrick.light;
+        break;
+      case 2:
+        _skinTone = fitzpatrick.mediumLight;
+        break;
+      case 3:
+        _skinTone = fitzpatrick.medium;
+        break;
+      case 4:
+        _skinTone = fitzpatrick.mediumDark;
+        break;
+      case 5:
+        _skinTone = fitzpatrick.dark;
+        break;
+    }
+    notifyListeners();
   }
 
   // private methods

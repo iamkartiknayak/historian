@@ -1,6 +1,8 @@
 import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../settings/providers/settings_provider.dart';
 import './emoji_item.dart';
 
 class EmojiGridView extends StatelessWidget {
@@ -26,12 +28,17 @@ class EmojiGridView extends StatelessWidget {
           final emoji = emojis.elementAt(index);
 
           return Center(
-            child: EmojiItem(
-              emoji: Emoji.modify(
-                emoji.char,
-                fitzpatrick.light,
-              ),
-              index: index,
+            child: Selector<SettingsProvider, fitzpatrick>(
+              selector: (p0, p1) => p1.skinTone,
+              builder: (context, skinTone, _) {
+                return EmojiItem(
+                  emoji: Emoji.modify(
+                    emoji.char,
+                    skinTone,
+                  ),
+                  index: index,
+                );
+              },
             ),
           );
         },

@@ -7,6 +7,7 @@ import '../providers/settings_provider.dart';
 import '../widgets/accent_color_pallete.dart';
 import '../widgets/border_radius_config_item.dart';
 import '../widgets/custom_switch.dart';
+import '../widgets/fitz_patrick_scale.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -80,6 +81,15 @@ class SettingsPage extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 32.0),
+            Text(
+              'Emojis & Emoticons',
+              style: Theme.of(context).textTheme.displayMedium,
+            ),
+            const SizedBox(height: 8.0),
+            const Text('Emoji Skin Tone'),
+            const SizedBox(height: 8.0),
+            const FitzPatrickScale(),
             const SizedBox(height: 32.0),
             Text(
               'Personalization',
