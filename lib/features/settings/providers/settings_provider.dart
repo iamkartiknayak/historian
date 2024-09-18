@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../services/snackbar_service.dart';
 import '../../clipboard/providers/clipboard_provider.dart';
+import '../../emoji/providers/emoji_provider.dart';
+import '../../emoticon/providers/emoticon_provider.dart';
 
 class SettingsProvider extends ChangeNotifier {
   // getters
@@ -160,6 +163,16 @@ class SettingsProvider extends ChangeNotifier {
         break;
     }
     notifyListeners();
+  }
+
+  void clearRecents() {
+    _context.read<EmojiProvider>().clearRecentEmojis();
+    _context.read<EmoticonProvider>().clearRecentEmoticons();
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'All recents are cleared',
+      time: 1000,
+    );
   }
 
   // private methods

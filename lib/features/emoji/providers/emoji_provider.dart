@@ -153,6 +153,11 @@ class EmojiProvider extends ChangeNotifier {
   Iterable<Emoji> getRecentEmojis() =>
       _recentEmojis.map((emojiChar) => Emoji.byChar(emojiChar)!);
 
+  void clearRecentEmojis() {
+    _recentEmojis.clear();
+    _recents.put('emojis', _recentEmojis);
+  }
+
   // private methods
   void _handleScrollController() {
     final offset = _scrollController.offset;

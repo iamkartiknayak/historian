@@ -87,6 +87,19 @@ class SettingsPage extends StatelessWidget {
               style: Theme.of(context).textTheme.displayMedium,
             ),
             const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Clear recents',
+                ),
+                CustomButton(
+                  onTap: context.read<SettingsProvider>().clearRecents,
+                  label: 'Clear',
+                ),
+              ],
+            ),
+            const SizedBox(height: 8.0),
             const Text('Emoji Skin Tone'),
             const SizedBox(height: 8.0),
             const FitzPatrickScale(),

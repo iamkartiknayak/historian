@@ -106,6 +106,11 @@ class EmoticonProvider extends ChangeNotifier {
   Iterable<Emoticon> getRecentEmoticons() =>
       _recentEmoticons.map((emojiChar) => Emoticons.byChar(emojiChar)!);
 
+  void clearRecentEmoticons() {
+    _recentEmoticons.clear();
+    _recents.put('emoticons', _recentEmoticons);
+  }
+
   // private methods
   void _initEmoticonCategories() {
     _categories = [
