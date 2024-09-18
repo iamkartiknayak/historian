@@ -15,7 +15,7 @@ class AccentColorPallete extends StatelessWidget {
     return SizedBox(
       height: 40,
       child: ListView.separated(
-        itemCount: settingsProvider.accentColorLength,
+        itemCount: settingsProvider.accentColors.length,
         scrollDirection: Axis.horizontal,
         itemBuilder: (context, index) {
           return InkWell(
