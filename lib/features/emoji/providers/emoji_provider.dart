@@ -46,14 +46,7 @@ class EmojiProvider extends ChangeNotifier {
 
   // public methods
   void initControllers(TickerProvider vsync, BuildContext context) {
-    if (_isInitialized) {
-      if (_tabController.index == 1 || _tabController.previousIndex == 1) {
-        return;
-      }
-
-      _tabController.index = 2;
-      return;
-    }
+    if (_isInitialized) return;
 
     debugPrint('EmojiProvider initControllers is called');
     _recents = Hive.box('recents');
