@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../../services/snackbar_service.dart';
 import '../models/text_item.dart';
@@ -22,7 +23,8 @@ class ClipboardProvider extends ChangeNotifier {
   late int _activeItemIndex;
   late final ScrollController _scrollController;
   late final List<dynamic> _deletedItems;
-  late BuildContext _context;
+  late final BuildContext _context;
+  late final Box<dynamic> settingsConfig;
 
   late final String _homeDirPath;
   final now = DateTime.now();
@@ -34,7 +36,7 @@ class ClipboardProvider extends ChangeNotifier {
   bool _isInitialized = false;
   bool _skipItem = false;
   bool _pauseClipboard = false;
-  int _clipboardSize = 30;
+  late int _clipboardSize;
   Timer? _timer;
 
 // public methods
@@ -42,6 +44,8 @@ class ClipboardProvider extends ChangeNotifier {
     if (_isInitialized) return;
 
     debugPrint('ClipboardProvider initControllers is called');
+    settingsConfig = Hive.box('settingsConfig');
+    _clipboardSize = settingsConfig.get('clipboardSize', defaultValue: 30);
     _context = context;
     _clipboard = [];
     _deletedItems = [];
@@ -79,12 +83,12 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void copyItem(int index) async {
+  void copyItem(int index, {bool showSnackbar = true}) async {
     _skipItem = true;
     _activeItemIndex = index;
 
     _copyTextItem(index);
-    if (_context.mounted) {
+    if (showSnackbar) {
       SnackBarService.showSnackBar(
         message: 'Text copied to clipboard',
         context: _context,
@@ -135,6 +139,7 @@ class ClipboardProvider extends ChangeNotifier {
     if (!isIncremented && _clipboardSize == _clipboardMinSize) return;
 
     _clipboardSize += isIncremented ? 1 : -1;
+    settingsConfig.put('clipboardSize', _clipboardSize);
 
     if (!isIncremented && _clipboard.length > _clipboardSize) {
       deleteItem(_clipboard.length - 1, showSnackbar: false);

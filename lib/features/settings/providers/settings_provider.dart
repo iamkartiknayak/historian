@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../clipboard/providers/clipboard_provider.dart';
@@ -17,9 +18,10 @@ class SettingsProvider extends ChangeNotifier {
 
   // private var
   late List<Color> _accentColors;
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+  late final AnimationController _animationController;
+  late final Animation<double> _animation;
   late final BuildContext _context;
+  late final Box<dynamic> settingsConfig;
 
   double _categoryOneRadius = 8.0; // more rounded => switch, color palette
   double _categoryTwoRadius = 8.0; // more curved => clipboard item, buttons
@@ -56,6 +58,8 @@ class SettingsProvider extends ChangeNotifier {
     if (_isInitialized) return;
 
     debugPrint('SettingsProvider initControllers is called');
+    settingsConfig = Hive.box('settingsConfig');
+    Future(() => _getSettingsConfigFromDb());
     _context = context;
     _accentColors = _lightAccentColors;
     _animationController = AnimationController(
@@ -77,6 +81,7 @@ class SettingsProvider extends ChangeNotifier {
 
   void setAccentColor(int index) {
     _accentColorIndex = index;
+    settingsConfig.put('accentColorIndex', _accentColorIndex);
     notifyListeners();
   }
 
@@ -100,7 +105,9 @@ class SettingsProvider extends ChangeNotifier {
         _selectedBorderRadiusConfig = 2;
         break;
     }
-
+    settingsConfig.put('borderRadiusConfig', _selectedBorderRadiusConfig);
+    settingsConfig.put('categoryOneRadius', _categoryOneRadius);
+    settingsConfig.put('categoryTwoRadius', _categoryTwoRadius);
     notifyListeners();
   }
 
@@ -119,4 +126,21 @@ class SettingsProvider extends ChangeNotifier {
   void _toggleSwitch() => _isClipboardListening
       ? _animationController.forward()
       : _animationController.reverse();
+
+  void _getSettingsConfigFromDb() {
+    _accentColorIndex = settingsConfig.get('accentColorIndex', defaultValue: 2);
+    _categoryOneRadius = settingsConfig.get(
+      'categoryOneRadius',
+      defaultValue: 8.0,
+    );
+    _categoryTwoRadius = settingsConfig.get(
+      'categoryTwoRadius',
+      defaultValue: 8.0,
+    );
+    _selectedBorderRadiusConfig = settingsConfig.get(
+      'borderRadiusConfig',
+      defaultValue: 1,
+    );
+    notifyListeners();
+  }
 }
