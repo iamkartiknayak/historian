@@ -140,28 +140,8 @@ class SettingsProvider extends ChangeNotifier {
 
   void setFitzpatrickScaleColor(int index) {
     _fitzpatrickScaleIndex = index;
+    _skinTone = _getSkinTone(_fitzpatrickScaleIndex);
     settingsConfig.put('fitzpatrickScaleIndex', _fitzpatrickScaleIndex);
-
-    switch (index) {
-      case 0:
-        _skinTone = fitzpatrick.None;
-        break;
-      case 1:
-        _skinTone = fitzpatrick.light;
-        break;
-      case 2:
-        _skinTone = fitzpatrick.mediumLight;
-        break;
-      case 3:
-        _skinTone = fitzpatrick.medium;
-        break;
-      case 4:
-        _skinTone = fitzpatrick.mediumDark;
-        break;
-      case 5:
-        _skinTone = fitzpatrick.dark;
-        break;
-    }
     notifyListeners();
   }
 
@@ -195,5 +175,24 @@ class SettingsProvider extends ChangeNotifier {
       defaultValue: 1,
     );
     notifyListeners();
+  }
+
+  fitzpatrick _getSkinTone(int index) {
+    switch (index) {
+      case 0:
+        return fitzpatrick.None;
+      case 1:
+        return fitzpatrick.light;
+      case 2:
+        return fitzpatrick.mediumLight;
+      case 3:
+        return fitzpatrick.medium;
+      case 4:
+        return fitzpatrick.mediumDark;
+      case 5:
+        return fitzpatrick.dark;
+      default:
+        return fitzpatrick.None;
+    }
   }
 }
