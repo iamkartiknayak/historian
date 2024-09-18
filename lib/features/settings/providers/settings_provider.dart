@@ -174,6 +174,11 @@ class SettingsProvider extends ChangeNotifier {
       'borderRadiusConfig',
       defaultValue: 1,
     );
+    _fitzpatrickScaleIndex = settingsConfig.get(
+      'fitzpatrickScaleIndex',
+      defaultValue: 0,
+    );
+    _skinTone = _getSkinTone(_fitzpatrickScaleIndex);
     notifyListeners();
   }
 
