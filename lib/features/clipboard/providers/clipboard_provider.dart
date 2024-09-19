@@ -26,7 +26,7 @@ class ClipboardProvider extends ChangeNotifier {
   late final BuildContext _context;
   late final Box<dynamic> settingsConfig;
 
-  late final String _homeDirPath;
+  // late final String _homeDirPath;
   final now = DateTime.now();
   static const previewCharLimit = 280;
   static const _clipboardMinSize = 5;
@@ -50,9 +50,7 @@ class ClipboardProvider extends ChangeNotifier {
     _clipboard = [];
     _deletedItems = [];
     _activeItemIndex = 0;
-    _homeDirPath = Platform.environment['HOME']!;
     _scrollController = ScrollController();
-    _createAppFolder();
     _startListening();
     _isInitialized = true;
   }
@@ -204,25 +202,6 @@ class ClipboardProvider extends ChangeNotifier {
       message: 'Clipboard has been $clipboardStatus',
     );
     notifyListeners();
-  }
-
-  // private methods
-  void _createAppFolder() {
-    final tempImagesDirPath = '$_homeDirPath/.historian/images';
-
-    Directory(tempImagesDirPath).createSync(recursive: true);
-    Directory.current = tempImagesDirPath;
-    _deleteAllTempFiles();
-  }
-
-  void _deleteAllTempFiles() async {
-    final directory = Directory.current;
-    final List<FileSystemEntity> entities = directory.listSync();
-
-    for (FileSystemEntity entity in entities) {
-      await entity.delete();
-      debugPrint('File deleted: ${entity.path}');
-    }
   }
 
   void _startListening() async {
