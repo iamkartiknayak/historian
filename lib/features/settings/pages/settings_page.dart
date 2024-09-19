@@ -5,6 +5,7 @@ import '../../../common/custom_button.dart';
 import '../../clipboard/providers/clipboard_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/accent_color_pallete.dart';
+import '../widgets/app_version_card.dart';
 import '../widgets/border_radius_config_item.dart';
 import '../widgets/custom_switch.dart';
 import '../widgets/fitz_patrick_scale.dart';
@@ -134,7 +135,9 @@ class SettingsPage extends StatelessWidget {
                   position: 2,
                 ),
               ],
-            )
+            ),
+            const Spacer(),
+            const AppVersionCard(),
           ],
         ),
       ),
