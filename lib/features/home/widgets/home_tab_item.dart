@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
+import '../../../common/accent_svg_icon.dart';
 
 class HomeTabItem extends StatelessWidget {
   const HomeTabItem({
@@ -16,14 +17,9 @@ class HomeTabItem extends StatelessWidget {
     final icon = isActive ? '${iconPath}_filled' : '${iconPath}_outlined';
 
     return Tab(
-      icon: SvgPicture.asset(
-        '$icon.svg',
-        colorFilter: ColorFilter.mode(
-          Theme.of(context).primaryColor,
-          BlendMode.srcIn,
-        ),
-        fit: BoxFit.fitHeight,
-        height: 24,
+      icon: AccentSvgIcon(
+        iconPath: '$icon.svg',
+        svgHeight: 24.0,
       ),
     );
   }

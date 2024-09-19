@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
+import './accent_svg_icon.dart';
 
 class CustomTabItem extends StatelessWidget {
   const CustomTabItem({
@@ -12,15 +13,7 @@ class CustomTabItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tab(
-      icon: SvgPicture.asset(
-        iconPath,
-        colorFilter: ColorFilter.mode(
-          Theme.of(context).primaryColor,
-          BlendMode.srcIn,
-        ),
-        fit: BoxFit.fitHeight,
-        height: 20,
-      ),
+      icon: AccentSvgIcon(iconPath: iconPath),
     );
   }
 }
