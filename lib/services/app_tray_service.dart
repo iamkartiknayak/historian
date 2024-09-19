@@ -26,7 +26,7 @@ class AppTrayService {
   bool _isInitialized = false;
 
   // public methods
-  static Future<void> initAppTray(BuildContext context) async {
+  Future<void> initAppTray(BuildContext context) async {
     if (_instance._isInitialized) return;
     _instance._context = context;
     debugPrint('AppTray initControllers called');
@@ -45,24 +45,24 @@ class AppTrayService {
     _instance._isInitialized = true;
   }
 
-  static void toggleClipboardListener() {
+  void toggleClipboardListener() {
     _instance._isListening = !_instance._isListening;
     _updateTrayIcon();
   }
 
-  static void rebuildAppTray(bool isVisible) async {
+  void rebuildAppTray(bool isVisible) async {
     _instance._isWindowVisible = isVisible;
     await _buildTrayMenu();
   }
 
-  static void setTrayIconBrightness(BuildContext context) {
+  void setTrayIconBrightness(BuildContext context) {
     final isLightTheme = Theme.of(context).brightness == Brightness.light;
     _instance._iconBrightness = isLightTheme ? 'light' : 'dark';
     _updateTrayIcon();
   }
 
   // private methods
-  static void _updateTrayIcon() async {
+  void _updateTrayIcon() async {
     final imagePath = _instance._isListening
         ? 'assets/tray_icons/logo_${_instance._iconBrightness}_active.png'
         : 'assets/tray_icons/logo_${_instance._iconBrightness}_inactive.png';
@@ -70,7 +70,7 @@ class AppTrayService {
     rebuildAppTray(_instance._isWindowVisible);
   }
 
-  static Future<void> _buildTrayMenu() async {
+  Future<void> _buildTrayMenu() async {
     final provider = _instance._context.read<SettingsProvider>();
 
     await _instance._menuMain.buildFrom(

@@ -133,7 +133,7 @@ class SettingsProvider extends ChangeNotifier {
   void toggleClipboardListener() {
     _isClipboardListening = !_isClipboardListening;
     _context.read<ClipboardProvider>().toggleClipboardListener();
-    AppTrayService.toggleClipboardListener();
+    AppTrayService().toggleClipboardListener();
     _toggleSwitch();
   }
 
