@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../../services/app_tray_service.dart';
 import '../../../services/snackbar_service.dart';
 import '../../clipboard/providers/clipboard_provider.dart';
 import '../../emoji/providers/emoji_provider.dart';
@@ -130,6 +131,7 @@ class SettingsProvider extends ChangeNotifier {
   void toggleClipboardListener() {
     _isClipboardListening = !_isClipboardListening;
     _context.read<ClipboardProvider>().toggleClipboardListener();
+    AppTrayService.toggleClipboardListener();
     _toggleSwitch();
   }
 

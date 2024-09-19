@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_window_close/flutter_window_close.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:system_theme/system_theme.dart';
+import 'package:window_manager/window_manager.dart';
 
 import './app_theme.dart';
 import './features/clipboard/providers/clipboard_provider.dart';
@@ -10,6 +12,7 @@ import './features/emoticon/providers/emoticon_provider.dart';
 import './features/home/pages/home_page.dart';
 import './features/home/providers/home_provider.dart';
 import './features/settings/providers/settings_provider.dart';
+import './services/app_tray_service.dart';
 import './services/snackbar_service.dart';
 
 void main() async {
@@ -17,6 +20,12 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('settingsConfig');
   await Hive.openBox('recents');
+
+  FlutterWindowClose.setWindowShouldCloseHandler(() async {
+    WindowManager.instance.hide();
+    AppTrayService.rebuildAppTray(false);
+    return AppTrayService.exitFlag == "terminate";
+  });
 
   runApp(MultiProvider(
     providers: [
@@ -40,6 +49,7 @@ class Historian extends StatefulWidget {
 class _HistorianState extends State<Historian> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    AppTrayService.initAppTray(context);
     context.read<HomeProvider>().initControllers(this);
     context.read<ClipboardProvider>().initControllers(context);
     context.read<EmojiProvider>().initControllers(this, context);
@@ -69,6 +79,7 @@ class _HistorianState extends State<Historian> with TickerProviderStateMixin {
       home: SystemThemeBuilder(
         builder: (context, color) {
           AppTheme.setAccentPallete(context);
+          AppTrayService.setTrayIconBrightness(context);
           return HomePage(key: homePageKey);
         },
       ),
