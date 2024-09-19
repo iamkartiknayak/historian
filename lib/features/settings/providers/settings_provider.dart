@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -155,6 +157,11 @@ class SettingsProvider extends ChangeNotifier {
       message: 'All recents are cleared',
       time: 1000,
     );
+  }
+
+  void openProjectInGitHub() {
+    const url = 'https://github.com/iamkartiknayak/Flutter_Historian';
+    Process.run('xdg-open', [url]);
   }
 
   // private methods
