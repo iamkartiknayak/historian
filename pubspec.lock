@@ -120,6 +120,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_window_close:
+    dependency: "direct main"
+    description:
+      name: flutter_window_close
+      sha256: "50dbe1d643ce18651408468e5fe51685e6eb8409269f26dd54dd9a4fff87ef3b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   hive:
     dependency: transitive
     description:
@@ -312,6 +320,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
+  screen_retriever:
+    dependency: transitive
+    description:
+      name: screen_retriever
+      sha256: "6ee02c8a1158e6dae7ca430da79436e3b1c9563c8cf02f524af997c201ac2b90"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.9"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -365,6 +381,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.3"
+  system_tray:
+    dependency: "direct main"
+    description:
+      name: system_tray
+      sha256: "40444e5de8ed907822a98694fd031b8accc3cb3c0baa547634ce76189cf3d9cf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
   term_glyph:
     dependency: transitive
     description:
@@ -389,6 +413,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.7"
   vector_graphics:
     dependency: transitive
     description:
@@ -437,6 +469,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  window_manager:
+    dependency: "direct main"
+    description:
+      name: window_manager
+      sha256: ab8b2a7f97543d3db2b506c9d875e637149d48ee0c6a5cb5f5fd6e0dac463792
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.2"
   xdg_directories:
     dependency: transitive
     description:
