@@ -205,6 +205,7 @@ class ClipboardProvider extends ChangeNotifier {
     SnackBarService.showSnackBar(
       context: _context,
       message: 'Clipboard has been $clipboardStatus',
+      time: 1000,
     );
     notifyListeners();
   }
