@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:emojis/emoji.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
