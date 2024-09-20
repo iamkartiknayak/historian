@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../app_theme.dart';
+import '../../../services/app_services.dart';
 import '../../../common/accent_svg_icon.dart';
-import '../providers/settings_provider.dart';
+
+const gitHubRepoUrl = 'https://github.com/iamkartiknayak/Flutter_Historian';
 
 class AppVersionCard extends StatelessWidget {
   const AppVersionCard({super.key});
@@ -25,7 +26,7 @@ class AppVersionCard extends StatelessWidget {
           const Text('Historian v2.0.0'),
           const Spacer(),
           InkWell(
-            onTap: context.read<SettingsProvider>().openProjectInGitHub,
+            onTap: () => AppServices().launchUrl(gitHubRepoUrl),
             child: const AccentSvgIcon(
               iconPath: 'assets/svgs/github.svg',
             ),
