@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app_theme.dart';
+import '../../../common/accent_svg_icon.dart';
 import '../../../common/custom_button.dart';
 import '../../clipboard/providers/clipboard_provider.dart';
 import '../providers/settings_provider.dart';
@@ -9,12 +11,15 @@ import '../widgets/app_version_card.dart';
 import '../widgets/border_radius_config_item.dart';
 import '../widgets/custom_switch.dart';
 import '../widgets/fitz_patrick_scale.dart';
+import '../widgets/keyboard_shortcuts_bottomsheet.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = Theme.of(context).extension<BorderRadiusTheme>();
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -31,6 +36,27 @@ class SettingsPage extends StatelessWidget {
                     svgPath: 'assets/svgs/chevron_left.svg',
                     svgHeight: 24.0,
                     noAccent: true,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            borderRadius!.categoryTwoRadius,
+                          ),
+                        ),
+                        context: context,
+                        builder: (context) =>
+                            const KeyboardShortcutsBottomsheet(),
+                      );
+                    },
+                    child: const AccentSvgIcon(
+                      iconPath: 'assets/svgs/keyboard.svg',
+                      svgHeight: 24.0,
+                    ),
                   ),
                 ),
                 Align(
