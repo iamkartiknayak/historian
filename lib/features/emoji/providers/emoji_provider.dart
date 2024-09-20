@@ -35,13 +35,13 @@ class EmojiProvider extends ChangeNotifier {
 
   static const Map<int, int> _categoryOffsetMap = {
     2: 0, // smiley & people
-    3: 6390, // animals & nature
+    3: 6385, // animals & nature
     4: 8328, // food & drink
-    5: 10110, // activity
-    6: 11256, // travel
-    7: 14151, // objects
-    8: 17523, // symbols
-    9: 20809, // flags
+    5: 10115, // activity
+    6: 11264, // travel
+    7: 14157, // objects
+    8: 17529, // symbols
+    9: 20820, // flags
   };
 
   // public methods
