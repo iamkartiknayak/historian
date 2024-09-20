@@ -114,6 +114,7 @@ class KeyboardService {
           break;
 
         case LogicalKeyboardKey.keyL:
+          if (!clipboardNotEmpty) return;
           provider.clearClipboard();
           break;
       }
