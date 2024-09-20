@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app_theme.dart';
 import '../../../common/accent_svg_icon.dart';
 import '../providers/settings_provider.dart';
 
@@ -9,10 +10,12 @@ class AppVersionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = Theme.of(context).extension<BorderRadiusTheme>();
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(0.0),
+        borderRadius: BorderRadius.circular(borderRadius!.categoryTwoRadius),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: Row(
