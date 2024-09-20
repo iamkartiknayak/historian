@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import './snackbar_service.dart';
 
@@ -23,6 +24,9 @@ class AppServices {
     debugPrint('App Services init is called');
     _homeDirPath = Platform.environment['HOME']!;
     await _createAppFolder();
+    await Hive.initFlutter(AppServices().hiveDbSavedirPath);
+    await Hive.openBox('settingsConfig');
+    await Hive.openBox('recents');
   }
 
   void setContext(BuildContext context) {

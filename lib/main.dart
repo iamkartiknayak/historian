@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_window_close/flutter_window_close.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:window_manager/window_manager.dart';
@@ -19,9 +18,6 @@ import './services/snackbar_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppServices().initData();
-  await Hive.initFlutter(AppServices().hiveDbSavedirPath);
-  await Hive.openBox('settingsConfig');
-  await Hive.openBox('recents');
 
   FlutterWindowClose.setWindowShouldCloseHandler(() async {
     WindowManager.instance.hide();
