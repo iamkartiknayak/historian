@@ -19,10 +19,9 @@ class CategoryHeader extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: const TextStyle(
-            fontSize: 18.0,
-            fontWeight: FontWeight.w500,
-          ),
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
         ),
       ),
     );
