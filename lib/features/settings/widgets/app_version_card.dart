@@ -23,7 +23,7 @@ class AppVersionCard extends StatelessWidget {
         children: [
           const AccentSvgIcon(iconPath: 'assets/svgs/logo.svg'),
           const SizedBox(width: 10.0),
-          const Text('Historian v2.0.0'),
+          const Text('Historian v2.6.3'),
           const Spacer(),
           InkWell(
             onTap: () => AppServices().launchUrl(gitHubRepoUrl),
