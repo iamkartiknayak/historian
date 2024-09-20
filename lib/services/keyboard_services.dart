@@ -54,8 +54,6 @@ class KeyboardService {
         }
       }
 
-      debugPrint('CTI : $tabIndex');
-
       switch (tabIndex) {
         case 0:
           _handleClipboardPage(event, clipboardProvider);
@@ -77,31 +75,36 @@ class KeyboardService {
 
   static void _handleClipboardPage(KeyEvent event, ClipboardProvider provider) {
     final activeItemIndex = provider.activeItemIndex;
-    if (provider.clipboard.isEmpty) return;
+    final clipboardNotEmpty = provider.clipboard.isNotEmpty;
 
     if (_pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
+      if (!clipboardNotEmpty) return;
       final isLowerBound = activeItemIndex <= 0;
       provider.setActiveItemIndex(isLowerBound ? 0 : -1);
       provider.keyboardNavScroll(false);
     } else if (_pressedKeys.contains(LogicalKeyboardKey.arrowDown)) {
+      if (!clipboardNotEmpty) return;
       final isUpperBound = activeItemIndex >= provider.clipboard.length - 1;
       provider.setActiveItemIndex(isUpperBound ? 0 : 1);
       provider.keyboardNavScroll(true);
     } else if (_pressedKeys.contains(LogicalKeyboardKey.controlLeft)) {
       switch (event.logicalKey) {
         case LogicalKeyboardKey.keyS:
-          debugPrint('Save if image: Index \$activeItemIndex');
+          debugPrint('Save if image: Index $activeItemIndex');
           break;
 
         case LogicalKeyboardKey.keyD:
+          if (!clipboardNotEmpty) return;
           provider.deleteItem(provider.activeItemIndex);
           break;
 
         case LogicalKeyboardKey.keyC:
+          if (!clipboardNotEmpty) return;
           provider.copyItem(provider.activeItemIndex);
           break;
 
         case LogicalKeyboardKey.keyP:
+          if (!clipboardNotEmpty) return;
           provider.handleItemPin(provider.activeItemIndex);
           break;
 
