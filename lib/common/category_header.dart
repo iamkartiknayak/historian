@@ -14,8 +14,8 @@ class CategoryHeader extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.only(
           left: 16.0,
-          top: 20.0,
-          bottom: 0.0,
+          top: 16.0,
+          bottom: 12.0,
         ),
         child: Text(
           label,
