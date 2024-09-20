@@ -159,11 +159,6 @@ class SettingsProvider extends ChangeNotifier {
     );
   }
 
-  void openProjectInGitHub() {
-    const url = 'https://github.com/iamkartiknayak/Flutter_Historian';
-    Process.run('xdg-open', [url]);
-  }
-
   // private methods
   void _toggleSwitch() => _isClipboardListening
       ? _animationController.forward()
