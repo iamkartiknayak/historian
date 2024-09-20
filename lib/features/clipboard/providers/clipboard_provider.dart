@@ -78,6 +78,11 @@ class ClipboardProvider extends ChangeNotifier {
 
     Clipboard.setData(const ClipboardData(text: ''));
     _clipboard.removeWhere((item) => !item.isPinned);
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'All unpinned items are cleared',
+      time: 1000,
+    );
     notifyListeners();
   }
 
