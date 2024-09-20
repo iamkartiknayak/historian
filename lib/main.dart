@@ -52,6 +52,7 @@ class _HistorianState extends State<Historian> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     AppTrayService().initAppTray(context);
+    AppServices().setContext(context);
     context.read<HomeProvider>().initControllers(this);
     context.read<ClipboardProvider>().initControllers(context);
     context.read<EmojiProvider>().initControllers(this, context);

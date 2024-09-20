@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import './snackbar_service.dart';
+
 class AppServices {
   AppServices._privateConstructor();
   static final AppServices _instance = AppServices._privateConstructor();
@@ -13,12 +15,30 @@ class AppServices {
   // private var
   late final String _homeDirPath;
   late final String _hiveDbSavedirPath;
+  late final BuildContext _context;
+  bool _isInitialized = false;
 
   // public methods
   Future<void> initData() async {
     debugPrint('App Services init is called');
     _homeDirPath = Platform.environment['HOME']!;
     await _createAppFolder();
+  }
+
+  void setContext(BuildContext context) {
+    if (_isInitialized) return;
+
+    _context = context;
+    _isInitialized = true;
+  }
+
+  void launchUrl(String url) {
+    Process.run('xdg-open', [url]);
+    SnackBarService.showSnackBar(
+      context: _context,
+      message: 'Launching ${Uri.parse(url).host}',
+      time: 1000,
+    );
   }
 
   // private methods
