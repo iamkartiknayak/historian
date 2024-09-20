@@ -17,6 +17,7 @@ class TextItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onlyEmoticons = ClipboardUtils.isOnlyEmoticons(item.textPreview);
+    final isUrl = item.textCategory == 'url';
 
     return Row(
       children: [
@@ -28,10 +29,14 @@ class TextItemWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   fontFamily: onlyEmoticons ? 'NotoColorEmoji' : 'Inter',
                   fontSize: onlyEmoticons ? 28.0 : null,
+                  decoration: isUrl ? TextDecoration.underline : null,
                 ),
           ),
         ),
-        BuildItemActions(index: index)
+        BuildItemActions(
+          index: index,
+          isUrl: isUrl,
+        )
       ],
     );
   }
