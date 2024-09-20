@@ -112,6 +112,10 @@ class KeyboardService {
           provider.undoDeleteItem();
           SnackBarService.scaffoldKey.currentState?.hideCurrentSnackBar();
           break;
+
+        case LogicalKeyboardKey.keyL:
+          provider.clearClipboard();
+          break;
       }
     }
   }
