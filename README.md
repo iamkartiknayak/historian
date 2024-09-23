@@ -102,6 +102,13 @@ Historian app continue running in the bg while showing a tray icon for quick acc
 - [X] **Pause/Resume Clipboard**: Enable or disable clipboard monitoring directly from the tray.
 - [X] **Status Indicator**: The tray icon changes to indicate whether clipboard is listening or paused.
 
+## Screenshots
+<img src="./screenshots/0.png" alt="Example Image" width="250">&nbsp;&nbsp;&nbsp;
+<img src="./screenshots/1.png" alt="Example Image" width="250">&nbsp;&nbsp;&nbsp;
+<img src="./screenshots/2.png" alt="Example Image" width="250">&nbsp;&nbsp;&nbsp;
+<img src="./screenshots/3.png" alt="Example Image" width="250"><br><br>
+
+
 ### License
 
 This project is licensed under the GPL3 License.
