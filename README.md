@@ -90,7 +90,7 @@ Access the settings page through the settings button, offering various customiza
 - **Personalization Settings**:
   - [X] Customize the app theme color.
   - [X] Modify border radius for UI components.
-  - [X] Enable accent colors on the app background with custom values for a personalized experience.
+  - [ ] Enable accent colors on the app background with custom values for a more personalized experience.
 
 All configurations are saved and automatically loaded on the next app launch.
 
