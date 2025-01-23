@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -210,16 +211,29 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _startListening() async {
-    Timer.periodic(const Duration(milliseconds: 100), (_) async {
-      if (_pauseClipboard) return;
-      ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+  void _startListening() {
+    final Duration checkInterval = const Duration(milliseconds: 300);
 
-      final content = data?.text;
-      if (content != null && content != _previousClipboardText) {
-        _getClipboardText(content);
+    Future<void> checkClipboard() async {
+      if (_pauseClipboard) return;
+
+      try {
+        final process = await Process.start('wl-paste', []);
+
+        process.stdout.transform(utf8.decoder).listen((content) {
+          content = content.trim();
+          if (content.isNotEmpty && content != _previousClipboardText) {
+            _getClipboardText(content);
+          }
+        }, onError: (e) {
+          debugPrint('Error reading stdout: $e');
+        });
+      } catch (e) {
+        debugPrint('Error running wl-paste: $e');
       }
-    });
+    }
+
+    Timer.periodic(checkInterval, (_) => checkClipboard());
   }
 
   // TODO: Add prog-lang recognition for syntax highlight
