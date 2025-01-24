@@ -25,6 +25,7 @@ class ClipboardProvider extends ChangeNotifier {
   late final ScrollController _scrollController;
   late final List<dynamic> _deletedItems;
   late final BuildContext _context;
+  late StreamSubscription<String> _clipboardSubscription;
   late final Box<dynamic> settingsConfig;
 
   // late final String _homeDirPath;
@@ -52,13 +53,16 @@ class ClipboardProvider extends ChangeNotifier {
     _deletedItems = [];
     _activeItemIndex = 0;
     _scrollController = ScrollController();
-    _startListening();
+    _clipboardSubscription = _startListening().listen(
+      (content) => _getClipboardText(content),
+    );
     _isInitialized = true;
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _clipboardSubscription.cancel();
     super.dispose();
   }
 
@@ -211,29 +215,13 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _startListening() {
-    final Duration checkInterval = const Duration(milliseconds: 300);
+  Stream<String> _startListening() async* {
+    final process = await Process.start('wl-paste', ['--watch', 'cat']);
+    final output = process.stdout.transform(utf8.decoder);
 
-    Future<void> checkClipboard() async {
-      if (_pauseClipboard) return;
-
-      try {
-        final process = await Process.start('wl-paste', []);
-
-        process.stdout.transform(utf8.decoder).listen((content) {
-          content = content.trim();
-          if (content.isNotEmpty && content != _previousClipboardText) {
-            _getClipboardText(content);
-          }
-        }, onError: (e) {
-          debugPrint('Error reading stdout: $e');
-        });
-      } catch (e) {
-        debugPrint('Error running wl-paste: $e');
-      }
+    await for (final line in output) {
+      yield line.trim();
     }
-
-    Timer.periodic(checkInterval, (_) => checkClipboard());
   }
 
   // TODO: Add prog-lang recognition for syntax highlight
@@ -243,8 +231,7 @@ class ClipboardProvider extends ChangeNotifier {
   }
 
   Future<void> _getClipboardText(String content) async {
-    if (content.trim().isEmpty) return;
-    if (content == _previousClipboardText) return;
+    if (content == _previousClipboardText || content.isEmpty) return;
 
     if (_skipItem) {
       _previousClipboardText = content;
