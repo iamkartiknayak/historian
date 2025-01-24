@@ -26,6 +26,11 @@ cd historian
 flutter pub get
 ```
 
+#### Install wl-clipboard:
+```bash
+sudo apt install wl-clipboard
+```
+
 #### Run the application:
 
 ```bash
