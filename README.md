@@ -33,7 +33,7 @@ flutter run
 ```
 
 ## Features Working on
-- [ ] **Native Text Clipboard Listener**: Replace dart clipboard listener with `wl-clipboard-rs` & `x11-clipboard`. [`BUG`: Dart clipboard listener doesn't work in wayland unless app is focused right after copy].
+- [X] **Native Text Clipboard Listener**: Replaced dart clipboard listener with `wl-paste` (Wayland only).
 - [ ] **Image support**: Support for images.
 - [ ] **Code Highlighting**: Supports syntax highlighting for code snippets.
 - [ ] **GIF**: Support for GIF, Search & copy GIF to clipboard to be pasted in supported docx.
