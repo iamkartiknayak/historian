@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../../core/extensions/string_extensions.dart';
 import '../../../services/snackbar_service.dart';
+import '../models/image_item.dart';
 import '../models/text_item.dart';
 import '../utils/clipboard_utils.dart';
 
@@ -28,13 +31,12 @@ class ClipboardProvider extends ChangeNotifier {
   late StreamSubscription<String> _clipboardSubscription;
   late final Box<dynamic> settingsConfig;
 
-  // late final String _homeDirPath;
-  final now = DateTime.now();
   static const previewCharLimit = 280;
   static const _clipboardMinSize = 5;
   static const _clipboardMaxSize = 30;
 
   String _previousClipboardText = '';
+  String _previousImageHash = '';
   bool _isInitialized = false;
   bool _skipItem = false;
   bool _pauseClipboard = false;
@@ -53,9 +55,7 @@ class ClipboardProvider extends ChangeNotifier {
     _deletedItems = [];
     _activeItemIndex = 0;
     _scrollController = ScrollController();
-    _clipboardSubscription = _startListening().listen(
-      (content) => _getClipboardText(content),
-    );
+    _startListening();
     _isInitialized = true;
   }
 
@@ -95,10 +95,13 @@ class ClipboardProvider extends ChangeNotifier {
     _skipItem = true;
     _activeItemIndex = index;
 
-    _copyTextItem(index);
+    String itemType = _clipboard[index].id.split(":")[0].toString();
+    itemType = itemType.capitalize();
+    itemType == 'Text' ? _copyTextItem(index) : _copyImageItem(index);
+
     if (showSnackbar) {
       SnackBarService.showSnackBar(
-        message: 'Text copied to clipboard',
+        message: '$itemType copied to clipboard',
         context: _context,
       );
     }
@@ -215,19 +218,130 @@ class ClipboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Stream<String> _startListening() async* {
-    final process = await Process.start('wl-paste', ['--watch', 'cat']);
-    final output = process.stdout.transform(utf8.decoder);
+  Stream<String> _startListening() {
+    final controller = StreamController<String>();
+    Timer? timer;
 
-    await for (final line in output) {
-      yield line.trim();
+    void checkClipboard() async {
+      if (_pauseClipboard) return;
+
+      try {
+        final mimeResult = await Process.run('wl-paste', ['--list-types']);
+        if (mimeResult.exitCode != 0) return;
+
+        final mimeTypes = mimeResult.stdout
+            .toString()
+            .split('\n')
+            .map((line) => line.trim())
+            .where((e) => e.isNotEmpty)
+            .toSet();
+
+        if (mimeTypes.isEmpty) return;
+
+        if (mimeTypes.contains('text/plain')) {
+          final textResult = await Process.run('wl-paste', []);
+          if (textResult.exitCode == 0) {
+            final text = textResult.stdout.toString().trim();
+            if (text.isNotEmpty && text != _previousClipboardText) {
+              _getClipboardText(text);
+            }
+          }
+          return;
+        }
+
+        if (mimeTypes.contains('image/png') ||
+            mimeTypes.contains('image/jpeg')) {
+          final extension = mimeTypes.contains('image/jpeg') ? 'jpeg' : 'png';
+          _processImage(extension, (newHash) {
+            _previousImageHash = newHash;
+          });
+        }
+      } catch (e) {
+        debugPrint('Error checking clipboard: $e');
+      }
     }
+
+    timer = Timer.periodic(
+      const Duration(milliseconds: 700),
+      (_) => checkClipboard(),
+    );
+
+    controller.onCancel = () {
+      timer?.cancel();
+      timer = null;
+    };
+
+    return controller.stream;
   }
 
   // TODO: Add prog-lang recognition for syntax highlight
   String _getTextCategory(String content) {
     String link = content.trim();
     return ClipboardUtils.isValidWebLink(link) ? 'url' : 'text';
+  }
+
+  Future<void> _processImage(
+      String extension, Function(String) updateHash) async {
+    try {
+      final result = await Process.run(
+        'wl-paste',
+        ['--no-newline', '--type', 'image/$extension'],
+        stdoutEncoding: Encoding.getByName('latin1'),
+      );
+
+      if (result.exitCode != 0 || result.stdout == null) return;
+
+      final imageBytes = (result.stdout as String).codeUnits;
+      final imageHash = crypto.sha256.convert(imageBytes).toString();
+
+      if (_skipItem) {
+        _previousImageHash = imageHash;
+        _skipItem = false;
+        return;
+      }
+
+      if (imageHash != _previousImageHash) {
+        _previousImageHash = imageHash;
+        updateHash(imageHash);
+
+        final id = DateTime.now().toIso8601String();
+        final filePath = '$id.$extension';
+        final file = File(filePath);
+        await file.writeAsBytes(imageBytes);
+
+        _getClipboardImage(file, extension);
+      }
+    } catch (e) {
+      debugPrint('Error processing image: $e');
+    }
+  }
+
+  Future<void> _getClipboardImage(File tempFile, String extension) async {
+    try {
+      final id = DateTime.now().toIso8601String();
+      final newPath = '$id.$extension';
+
+      await tempFile.rename(newPath);
+
+      if (_clipboard.length == _clipboardSize) {
+        deleteItem(_clipboard.length - 1, showSnackbar: false);
+      }
+
+      _clipboard.insert(
+        0,
+        ImageItem(
+          id: 'image:$id',
+          imageFilePath: newPath,
+          isPinned: false,
+          alt: '',
+        ),
+      );
+
+      _activeItemIndex = 0;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error saving clipboard image: $e');
+    }
   }
 
   Future<void> _getClipboardText(String content) async {
@@ -239,14 +353,10 @@ class ClipboardProvider extends ChangeNotifier {
       return;
     }
 
-    if (_clipboard.length == _clipboardSize) {
-      deleteItem(_clipboard.length - 1, showSnackbar: false);
-    }
-
     final previewLength =
         content.length <= previewCharLimit ? content.length : previewCharLimit;
     final textPreview = content.substring(0, previewLength);
-    final id = now.toIso8601String();
+    final id = DateTime.now().toIso8601String();
     late final String textFilePath;
 
     if (content.length > previewCharLimit) {
@@ -263,6 +373,10 @@ class ClipboardProvider extends ChangeNotifier {
     }
 
     final textCategory = _getTextCategory(content);
+
+    if (_clipboard.length == _clipboardSize) {
+      deleteItem(_clipboard.length - 1, showSnackbar: false);
+    }
 
     _clipboard.insert(
       0,
@@ -295,6 +409,16 @@ class ClipboardProvider extends ChangeNotifier {
       Clipboard.setData(ClipboardData(text: content));
     } catch (e) {
       debugPrint('Error reading the file: $e');
+    }
+  }
+
+  void _copyImageItem(int index) async {
+    final fileName = clipboard[index].imageFilePath;
+
+    try {
+      await Process.run('sh', ['-c', 'wl-copy < $fileName']);
+    } catch (e) {
+      debugPrint('Error copying image to clipboard: $e');
     }
   }
 }
