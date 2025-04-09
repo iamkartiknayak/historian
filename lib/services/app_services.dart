@@ -45,6 +45,36 @@ class AppServices {
     );
   }
 
+  Future<void> saveImage(String filePath) async {
+    final fileName = filePath.split('/').last;
+    final extension = fileName.split('.').last;
+
+    final result = await Process.run(
+      'zenity',
+      [
+        '--file-selection',
+        '--save',
+        '--confirm-overwrite',
+        '--title=Save Image As',
+        '--filename=$_homeDirPath/$fileName',
+        '--file-filter=*.$extension'
+      ],
+    );
+
+    if (result.exitCode != 0) return;
+
+    final newPath = result.stdout.toString().trim();
+    final saveResult = await Process.run('cp', [filePath, newPath]);
+
+    if (_context.mounted && saveResult.exitCode == 0) {
+      SnackBarService.showSnackBar(
+        context: _context,
+        message: 'Image has been saved successfully',
+        time: 1000,
+      );
+    }
+  }
+
   // private methods
   Future<void> _createAppFolder() async {
     final tempSaveDirPath = '$_homeDirPath/.historian/tempData';
