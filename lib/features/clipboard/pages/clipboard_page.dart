@@ -5,6 +5,7 @@ import '../../../common/custom_button.dart';
 import '../providers/clipboard_provider.dart';
 import '../widgets/clipboard_item_layout.dart';
 import '../widgets/empty_clipboard_widget.dart';
+import '../widgets/image_item_widget.dart';
 import '../widgets/text_item_widget.dart';
 
 class ClipboardPage extends StatelessWidget {
@@ -41,7 +42,9 @@ class ClipboardPage extends StatelessWidget {
                       return ClipboardItemLayout(
                         onTap: () => provider.copyItem(index),
                         isActive: isActive,
-                        child: TextItemWidget(index: index, item: item),
+                        child: item.id.startsWith("text")
+                            ? TextItemWidget(index: index, item: item)
+                            : ImageItemWidget(index: index, item: item),
                       );
                     },
                   ),
