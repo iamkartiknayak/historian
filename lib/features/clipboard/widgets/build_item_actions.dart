@@ -9,11 +9,13 @@ class BuildItemActions extends StatelessWidget {
   const BuildItemActions({
     super.key,
     required this.index,
-    required this.isUrl,
+    this.isUrl = false,
+    this.isImage = false,
   });
 
   final int index;
   final bool isUrl;
+  final bool isImage;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,12 @@ class BuildItemActions extends StatelessWidget {
             svgPath: 'assets/svgs/open.svg',
             onTap: () => AppServices()
                 .launchUrl(clipboardProvider.clipboard[index].textPreview),
+          ),
+        if (isImage)
+          ActionIconButton(
+            svgPath: 'assets/svgs/save.svg',
+            onTap: () => AppServices()
+                .saveImage(clipboardProvider.clipboard[index].imageFilePath),
           )
       ],
     );
