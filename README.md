@@ -29,7 +29,7 @@ flutter pub get
 #### Install wl-clipboard:
 
 ```bash
-sudo apt install wl-clipboard
+sudo apt install wl-clipboard zenity
 ```
 
 #### Run the application:
@@ -37,6 +37,11 @@ sudo apt install wl-clipboard
 ```bash
 flutter run
 ```
+
+
+> ⚠️ **Image Support**  
+> Firefox-based browsers work out of the box.  
+> For Chromium-based browsers, make sure to enable **Wayland** or **Auto** mode under `chrome://flags` → **Preferred Ozone platform** for proper clipboard image support on Wayland.
 
 ## Features Working on
 
